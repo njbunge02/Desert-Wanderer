@@ -161,53 +161,6 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
 		lightPosition.v[0] += 0.5;
 	}
 
-	if (key == GLFW_KEY_X && action == GLFW_PRESS)
-    {
-		ambient += 0.1;
-	}
-	 if (key == GLFW_KEY_Z && action == GLFW_PRESS)
-    {
-		ambient -= 0.25;
-	}
-
- if (key == GLFW_KEY_I && action == GLFW_PRESS)
-    {
-		if (diffuseOn == 1)
-			diffuseOn = 0;
-		else
-			diffuseOn = 1;
-	}
-
-	if (key == GLFW_KEY_O && action == GLFW_PRESS)
-    {
-		if (specularOn == 1)
-			specularOn = 0;
-		else
-			specularOn = 1;
-	}
-	 if (key == GLFW_KEY_P && action == GLFW_PRESS)
-    {
-		if (textureOn == 1)
-			textureOn = 0;
-		else
-			textureOn = 1;
-	}
-	if (key == GLFW_KEY_R && action == GLFW_PRESS)
-    {
-
-	}
-
-	if (key == GLFW_KEY_M && action == GLFW_PRESS)
-    {
-		specularHighlight -= 0.5;
-	}
-	if (key == GLFW_KEY_N && action == GLFW_PRESS)
-    {
-		specularHighlight += 0.5;
-	}
-
-
-
         
 	if (GLFW_PRESS == glfwGetKey (g_window, GLFW_KEY_ESCAPE)) {
 		// Close window when esacape is pressed
@@ -218,31 +171,33 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
 
 
 void generateFloor(vector<float> &vertices, vector<float> &normals, vector<float>& texCoords)
-{
+{	
+	int offsetY = -1;
+	float x = 2.5;
 	//face 1, vertex 1
-	vertices.push_back(-1);
-	vertices.push_back(-1);
+	vertices.push_back(-x);
+	vertices.push_back(0 + offsetY);
 	vertices.push_back(0);
 	//face 1, vertex 2
-	vertices.push_back(1);
-	vertices.push_back(-1);
+	vertices.push_back(x);
+	vertices.push_back(0+ offsetY);
 	vertices.push_back(0);
 	//face 1, vertex 3
-	vertices.push_back(-1);
-	vertices.push_back(1);
+	vertices.push_back(-x);
+	vertices.push_back(0.1+ offsetY);
 	vertices.push_back(0);
 
 	//face 2, vertex 1
-	vertices.push_back(-1);
-	vertices.push_back(1);
+	vertices.push_back(-x);
+	vertices.push_back(0.1+ offsetY);
 	vertices.push_back(0);
 	//face 2, vertex 2
-	vertices.push_back(1);
-	vertices.push_back(-1);
+	vertices.push_back(x);
+	vertices.push_back(0+ offsetY);
 	vertices.push_back(0);
 	//face 2, vertex 3
-	vertices.push_back(1);
-	vertices.push_back(1);
+	vertices.push_back(x);
+	vertices.push_back(0.1+ offsetY);
 	vertices.push_back(0);
 
 

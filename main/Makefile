@@ -1,4 +1,4 @@
-BIN = SpriteAnimation
+BIN = cg05
 CC = g++
 FLAGS = -Wall -pedantic -no-pie
 INC = -I ../common/include
