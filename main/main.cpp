@@ -226,8 +226,15 @@ int main (int argc, char *argv[]) {
 			{count = 0;
 			idleFlag = false;}
 		else if (isA)
-			{idleFlag = false;}
+			{idleFlag = false;
+					GLint textScale = glGetUniformLocation(shader_programme, "reverse");
+			glUniform1i(textScale, 1);
+		count = 0;
+			uv_y = 0.0f;
+			numXInAnimation = 8.0f;}
 		else if (isD){
+			GLint textScale = glGetUniformLocation(shader_programme, "reverse");
+			glUniform1i(textScale, 0);
 		count = 0;
 			uv_y = 0.0f;
 			numXInAnimation = 8.0f;
@@ -235,10 +242,11 @@ int main (int argc, char *argv[]) {
 		}
 		else if (isS)
 		{
-		count = 0;
-		idleFlag = false;
+
+			idleFlag = false;
 		}else 
 		{
+
 		count++;
 		}
 

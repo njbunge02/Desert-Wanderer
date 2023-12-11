@@ -156,7 +156,7 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
 	//GLFW Reference Links:
 	// Callback Example: https://www.glfw.org/docs/3.3/input_guide.html#input_key
 	// List of Keys: https://www.glfw.org/docs/3.3/group__keys.html
-	float movementSpeed = 0.001f;
+	float movementSpeed = 0.00125f;
     if (key == GLFW_KEY_W)
     {
 		 if (action == GLFW_PRESS) {
@@ -184,6 +184,7 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
 
 		 if (action == GLFW_PRESS) {
             isA = true;
+			isD = false;
 			spriteX = -movementSpeed;
         } else if (action == GLFW_RELEASE) {
             isA = false;
@@ -194,6 +195,7 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
     {
 		 if (action == GLFW_PRESS) {
             isD = true;
+			isA = false;
 			spriteX = movementSpeed;
         } else if (action == GLFW_RELEASE) {
             isD = false;
