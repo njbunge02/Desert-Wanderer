@@ -78,7 +78,7 @@ bool load_texture (const char* file_name, GLuint* tex);
 | argv[3]: First Texture Filename (third argument at command-line)             |
 | argv[4]: Second Texture Filename(optional fourth argument at command-line)   |
 |******************************************************************************/
-
+const float frameHeight = 1.0f / ny_frames;
 int main (int argc, char *argv[]) {
 /*--------------------------------START OPENGL--------------------------------*/
 	assert (restart_gl_log ());
@@ -174,7 +174,7 @@ int main (int argc, char *argv[]) {
 	model_player = identity_mat4();
 	model_mat = identity_mat4();
 
-	double frames_ps = 3.0f;
+	double frames_ps = 10.0f;
 
 
 	// Setup basic GL display attributes.	
@@ -185,6 +185,8 @@ int main (int argc, char *argv[]) {
 	glFrontFace (GL_CCW);       // set counter-clock-wise vertex order to mean the front
 	glClearColor (0.1, 0.1, 0.1, 1.0);   // non-black background to help spot mistakes
 	glViewport (0, 0, g_gl_width, g_gl_height); // make sure correct aspect ratio
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	double now_time, old_time, time_delta;
 	now_time = old_time = 0.0f;
@@ -194,17 +196,27 @@ int main (int argc, char *argv[]) {
 		// update timers
 		now_time = glfwGetTime();
 		time_delta = now_time - old_time;
-
+		bool down = true;
 		_update_fps_counter (g_window);
 
 		if(time_delta >= 1.0f/frames_ps){
 			old_time = now_time;
-			time_delta = 0.0f;
-			uv_y += 1.0f;
-			if(uv_y >= ny_frames){
-				uv_y = 0.0f;
-			}
+			time_delta -= 1.0f / frames_ps; // Correctly decrement the time_delta by the time of one frame      
 
+			// If we have gone past the last frame, wrap around to the first frame
+			if (down) {
+				uv_y += frameHeight; // Move to the next frame down
+				if (uv_y > 1.0f - frameHeight) { // Check if we're at the last frame
+					down = false; // Switch direction to animate up
+				}
+			} else {
+				uv_y -= frameHeight; // Move to the next frame up
+				if (uv_y < 0.0f) { // Check if we're at the first frame
+					down = true; // Switch direction to animate down
+				}
+						
+
+			}
 		}
 		
 		vec3 position;

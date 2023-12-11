@@ -33,7 +33,7 @@ mat4 model_mat;
 mat4 model_player;
 
 float nx_frames = 1.0f, ny_frames = 6.0f;
-float uv_x = 1.0f, uv_y = 0.0f;
+float uv_x = 0.0f, uv_y = 0.0f;
 
 bool isW;
 bool isA;

@@ -18,10 +18,10 @@ void main() {
 
     vec3 result;
 
-    float x = 1.0/nx_frames;
-    float y = 1.0/ny_frames;
-
-    fragColor= texture(textureSampler, vec2(textureCoordinates.x * x, textureCoordinates.y * y) + vec2(x* uv_x, y * uv_y));
+    float frameHeight = 1.0 / ny_frames; // Height of one frame
+    vec2 frameOffset = vec2(0.0f, uv_y); // Since there is only one column, the x offset is 0
+    vec2 texCoord = vec2(textureCoordinates.x, textureCoordinates.y * frameHeight) + vec2(0.0f, frameOffset.y);
+    fragColor = texture(textureSampler, texCoord);
 
     /*if (textureOn == 1)
     {
