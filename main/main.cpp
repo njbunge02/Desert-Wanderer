@@ -78,7 +78,7 @@ bool load_texture (const char* file_name, GLuint* tex);
 | argv[3]: First Texture Filename (third argument at command-line)             |
 | argv[4]: Second Texture Filename(optional fourth argument at command-line)   |
 |******************************************************************************/
-const float frameHeight = 1.0f / ny_frames;
+const float frameHeight = 1.0f / nx_frames;
 int main (int argc, char *argv[]) {
 /*--------------------------------START OPENGL--------------------------------*/
 	assert (restart_gl_log ());
@@ -111,7 +111,7 @@ int main (int argc, char *argv[]) {
 
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(GL_TRUE);
-    unsigned char *img_data = stbi_load("./Meow Knight/Meow-Knight_Idle.png", &width, &height, &nrChannels, 0);
+    unsigned char *img_data = stbi_load("./spritesheet.png", &width, &height, &nrChannels, 0);
     if(!img_data) {
         fprintf(stderr, "Failed loading image!\n");
         glfwTerminate();
@@ -198,26 +198,16 @@ int main (int argc, char *argv[]) {
 		time_delta = now_time - old_time;
 		bool down = true;
 		_update_fps_counter (g_window);
-
-		if(time_delta >= 1.0f/frames_ps){
-			old_time = now_time;
-			time_delta -= 1.0f / frames_ps; // Correctly decrement the time_delta by the time of one frame      
-
-			// If we have gone past the last frame, wrap around to the first frame
-			if (down) {
-				uv_y += frameHeight; // Move to the next frame down
-				if (uv_y > 1.0f - frameHeight) { // Check if we're at the last frame
-					down = false; // Switch direction to animate up
-				}
-			} else {
-				uv_y -= frameHeight; // Move to the next frame up
-				if (uv_y < 0.0f) { // Check if we're at the first frame
-					down = true; // Switch direction to animate down
-				}
-						
-
-			}
-		}
+        now_time = glfwGetTime();
+        time_delta = now_time - old_time;
+        if(time_delta >= 1.0f / frames_ps) {
+            old_time = now_time;
+            time_delta = 0.0f;
+            uv_x += 1.0f;
+            if(uv_x >= 6.0f) {
+                uv_x = 0.0f;
+            }
+        }
 		
 		vec3 position;
     	position.v[0] = model_player.m[12]; // X component of translation
