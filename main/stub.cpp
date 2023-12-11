@@ -43,6 +43,7 @@ bool isD;
 using namespace std;
 
 vector<float> floorVerts;
+vector<float> floorTexCoords;
 vector<float> platVerts;
 
 
@@ -54,7 +55,7 @@ GLuint floorVao;
 GLuint platVao;
 
 
-void generateFloor(vector<float> &vertices);
+void generateFloor(vector<float> &vertices, vector<float> &texCoords);
 void generatePlatform(vector<float> &vertices);
 void generatePlayer(vector<float> &vertices, vector<float>& texCoords);
 void loadFloor();
@@ -66,12 +67,12 @@ void loadSurfaceOfRevolution()
 {
 /*------------------------------CREATE GEOMETRY-------------------------------*/
 	
-	generateFloor(floorVerts);
-	generatePlatform(platVerts);
+	generateFloor(floorVerts, floorTexCoords);
+	//generatePlatform(platVerts);
 	generatePlayer(playerVerts, playerTexCoords);
 	loadFloor();
 	loadPlayer();
-	loadPlatform();
+	//loadPlatform();
 	
 
 }
@@ -110,6 +111,7 @@ void drawStage(GLuint shader_programme)
 
 	glBindVertexArray(floorVao);
 	
+
 	GLint textOn = glGetUniformLocation(shader_programme, "textureOn");
 	glUniform1i(textOn, 0);
 
@@ -119,8 +121,8 @@ void drawStage(GLuint shader_programme)
     glDrawArrays(GL_TRIANGLES, 0, floorVerts.size());
 
 
-	glBindVertexArray(platVao);
-    glDrawArrays(GL_TRIANGLES, 0, platVerts.size());
+	/*glBindVertexArray(platVao);
+    glDrawArrays(GL_TRIANGLES, 0, platVerts.size());*/
 
 }
 
@@ -194,35 +196,55 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
 }
 
 
-void generateFloor(vector<float> &vertices)
+void generateFloor(vector<float> &vertices, vector<float> &texCoords)
 {	
 	int offsetY = -1;
+	float height = 0.3;
 	float x = 2.5;
+	
+	
 	//face 1, vertex 1
 	vertices.push_back(-x);
 	vertices.push_back(0 + offsetY);
 	vertices.push_back(0);
 	//face 1, vertex 2
 	vertices.push_back(x);
-	vertices.push_back(0+ offsetY);
+	vertices.push_back(0 + offsetY);
 	vertices.push_back(0);
 	//face 1, vertex 3
 	vertices.push_back(-x);
-	vertices.push_back(0.1+ offsetY);
+	vertices.push_back(height + offsetY);
 	vertices.push_back(0);
 
 	//face 2, vertex 1
 	vertices.push_back(-x);
-	vertices.push_back(0.1+ offsetY);
+	vertices.push_back(height + offsetY);
 	vertices.push_back(0);
 	//face 2, vertex 2
 	vertices.push_back(x);
-	vertices.push_back(0+ offsetY);
+	vertices.push_back(0 + offsetY);
 	vertices.push_back(0);
 	//face 2, vertex 3
 	vertices.push_back(x);
-	vertices.push_back(0.1+ offsetY);
+	vertices.push_back(height + offsetY);
 	vertices.push_back(0);
+
+	texCoords.push_back(0.0f); // Texture coordinate for vertex 1 of face 1 (bottom-left)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(5.0f); // Texture coordinate for vertex 2 of face 1 (bottom-right)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(0.0f); // Texture coordinate for vertex 3 of face 1 (top-left)
+    texCoords.push_back(1.0f);
+    // Texture coordinate for vertex 1 of face 2 (top-left)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.0f);
+    texCoords.push_back(5.0f); // Texture coordinate for vertex 2 of face 2 (bottom-right)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(5.0f); // Texture coordinate for vertex 3 of face 2 (top-right)
+    texCoords.push_back(1.0f);
+
+
+	
 
 }
 
@@ -263,9 +285,10 @@ void generatePlatform(vector<float> &vertices)
 void generatePlayer(vector<float> &vertices, vector<float> &texCoords)
 {
 	int offsetY = 0;
-	float height = 1;
-	float x = 0.5;
+	float height = 0.5f;
+	float x = height/2.0f;
 	//face 1, vertex 1
+	
 	vertices.push_back(-x);
 	vertices.push_back(0 + offsetY);
 	vertices.push_back(0);
@@ -322,6 +345,13 @@ void loadFloor()
 	glBufferData(GL_ARRAY_BUFFER, floorVerts.size() * sizeof(float), floorVerts.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(0);
+
+	GLuint texcoords_vbo;
+    glGenBuffers(1, &texcoords_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, texcoords_vbo);
+    glBufferData(GL_ARRAY_BUFFER, floorTexCoords.size() * sizeof(float), floorTexCoords.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(2);
 
 
 }

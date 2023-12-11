@@ -124,11 +124,7 @@ int main (int argc, char *argv[]) {
     stbi_image_free(img_data);
 
 
-
-
-
-
-	/*unsigned int texture1;
+	unsigned int texture1;
     glGenTextures(1, &texture1);
     glBindTexture(GL_TEXTURE_2D, texture1);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -137,18 +133,18 @@ int main (int argc, char *argv[]) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     int width1, height1, nrChannels1;
-    unsigned char *img_data1 = stbi_load("./Meow Knight/Meow-Knight_Run.png", &width1, &height1, &nrChannels1, 0);
+    unsigned char *img_data1 = stbi_load("grass.png", &width1, &height1, &nrChannels1, 0);
     if(!img_data1) {
         fprintf(stderr, "Failed loading image!\n");
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width1, height1, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data1);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    stbi_image_free(img_data1);*/
+    stbi_image_free(img_data1);
 	
-
+	
 
 	
 /*-------------------------------CREATE CAMERA--------------------------------*/
@@ -245,9 +241,20 @@ int main (int argc, char *argv[]) {
 		// YOU HAVE TO IMPLEMENT THIS FUNCTION IN stub.cpp	
 		
 		loadUniforms(shader_programme);
+   
+   glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0); // 0 represents GL_TEXTURE0
 
+    // Bind the texture to GL_TEXTURE0 (if that's the texture unit index you're using)
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture1); // Bind your desired texture to the unit
 
+	
 		drawStage(shader_programme);
+		glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0); // 0 represents GL_TEXTURE0
+    // Bind the texture to GL_TEXTURE0 (if that's the texture unit index you're using)
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture); // Bind your desired texture to the unit
+
 		drawPlayer(shader_programme);
 
 		// update other events like input handling 

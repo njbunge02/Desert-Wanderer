@@ -22,21 +22,22 @@ void main() {
     float y = 1.0f / ny_frames;
     frag_color = texture(textureSampler, vec2(textureCoordinates.x * x, textureCoordinates.y * y) + vec2(x * uv_x, y * uv_y));*/
 
-    float frameXHeight = 1.0f / nx_frames;
+  
+
+  if (textureOn == 1)
+    {
+     float frameXHeight = 1.0f / nx_frames;
     float frameYHeight = 1.0f / ny_frames;
     vec2 frameOffset = vec2(uv_x * frameXHeight, uv_y * frameYHeight); 
     vec2 texCoord = vec2(textureCoordinates.x * frameXHeight, textureCoordinates.y * frameYHeight) + frameOffset;
     fragColor = texture(textureSampler, texCoord);
 
-    /*if (textureOn == 1)
-    {
-        vec4 texColor = texture(textureSampler, textureCoordinates);
-        fragColor = vec4(texColor.rgb, 1.0);
-
     }else
     {
-       fragColor = vec4(1.0f, 0.0f, 0.0f, 1.0);
-    }*/
+        vec2 modifiedTexCoord = vec2(textureCoordinates.x * 5, textureCoordinates.y);
+       fragColor = texture(textureSampler, modifiedTexCoord);
+    }
 
-    
+
+
 }
