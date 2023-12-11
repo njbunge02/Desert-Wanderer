@@ -214,11 +214,11 @@ int main (int argc, char *argv[]) {
 
 		if (isW)
 			model_player = translate(model_player, vec3(0.0f, 0.001f, 0.0f));
-		if (isA && position.v[0] > -2)
+		if (isA && position.v[0] > -2.4f)
 			model_player = translate(model_player, vec3(-0.001f, 0.0f, 0.0f));
-		if (isD && position.v[0] < 2)
+		if (isD && position.v[0] < 2.4f)
 			model_player = translate(model_player, vec3(0.001f, 0.0f, 0.0f));
-		if (isS && position.v[1] > -0.9f)
+		if (isS && position.v[1] > -.87)
 			{
 			model_player = translate(model_player, vec3(0.0f, -0.001f, 0.0f));
 			}

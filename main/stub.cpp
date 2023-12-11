@@ -301,7 +301,7 @@ void generatePlatform(vector<float> &vertices, vector<float> &texCoords)
 void generatePlayer(vector<float> &vertices, vector<float> &texCoords)
 {
 	int offsetY = 0;
-	float height = 0.5f;
+	float height = 0.625f;
 	float x = height/2.0f;
 	//face 1, vertex 1
 	
