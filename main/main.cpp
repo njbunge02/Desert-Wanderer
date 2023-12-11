@@ -43,6 +43,7 @@ extern mat4 model_player;
 
 extern float nx_frames, ny_frames;
 extern float uv_x, uv_y;
+double numXInAnimation = 6.0f;
 
 extern bool isW;
 extern bool isA;
@@ -204,7 +205,7 @@ int main (int argc, char *argv[]) {
             old_time = now_time;
             time_delta = 0.0f;
             uv_x += 1.0f;
-            if(uv_x >= 6.0f) {
+            if(uv_x >= numXInAnimation) {
                 uv_x = 0.0f;
             }
         }
