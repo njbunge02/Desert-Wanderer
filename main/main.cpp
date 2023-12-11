@@ -27,6 +27,8 @@
 #include "gl_utils.h"      // Anton's opengl functions and small utilities like logs
 #include "obj_parser.h"    // Anton's little Wavefront .obj mesh loader
 
+
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"     // Sean Barrett's image loader with Anton's load_texture()
 
 #define _USE_MATH_DEFINES
@@ -96,11 +98,34 @@ int main (int argc, char *argv[]) {
 
 /*-------------------------------SETUP TEXTURES-------------------------------*/
 	// load textures
-	GLuint tex00;
-	int tex00location = glGetUniformLocation (shader_programme, "texture00");
-	glUniform1i (tex00location, 0);
-	glActiveTexture (GL_TEXTURE0);
-	assert (load_texture ("atlas.jpg", &tex00));
+unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    int width, height, nrChannels;
+    stbi_set_flip_vertically_on_load(GL_TRUE);
+    unsigned char *img_data = stbi_load("./Meow Knight/Meow-Knight_Idle.png", &width, &height, &nrChannels, 0);
+    if(!img_data) {
+        fprintf(stderr, "Failed loading image!\n");
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(img_data);
+
+    float nx_frames = 1.0f, ny_frames = 6.0f;
+    float uv_x = 0.0f, uv_y = 0.0f;
+
+
+    double time_now, time_old, time_delta, frames_ps;
+    frames_ps = 4.0f;
+    time_now = time_old = glfwGetTime();
 
 
 
