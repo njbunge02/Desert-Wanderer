@@ -41,6 +41,9 @@ extern mat4 proj_mat;
 extern mat4 model_mat;
 extern mat4 model_player;
 
+extern float nx_frames, ny_frames;
+extern float uv_x, uv_y;
+
 extern bool isW;
 extern bool isA;
 extern bool isS;
@@ -98,7 +101,7 @@ int main (int argc, char *argv[]) {
 
 /*-------------------------------SETUP TEXTURES-------------------------------*/
 	// load textures
-unsigned int texture;
+	unsigned int texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -119,14 +122,31 @@ unsigned int texture;
 
     stbi_image_free(img_data);
 
-    float nx_frames = 1.0f, ny_frames = 6.0f;
-    float uv_x = 0.0f, uv_y = 0.0f;
 
 
-    double time_now, time_old, time_delta, frames_ps;
-    frames_ps = 4.0f;
-    time_now = time_old = glfwGetTime();
 
+
+
+	/*unsigned int texture1;
+    glGenTextures(1, &texture1);
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    int width1, height1, nrChannels1;
+    unsigned char *img_data1 = stbi_load("./Meow Knight/Meow-Knight_Run.png", &width1, &height1, &nrChannels1, 0);
+    if(!img_data1) {
+        fprintf(stderr, "Failed loading image!\n");
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data1);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(img_data1);*/
+	
 
 
 	
@@ -154,6 +174,8 @@ unsigned int texture;
 	model_player = identity_mat4();
 	model_mat = identity_mat4();
 
+	double frames_ps = 3.0f;
+
 
 	// Setup basic GL display attributes.	
 	glEnable (GL_DEPTH_TEST);   // enable depth-testing
@@ -164,14 +186,26 @@ unsigned int texture;
 	glClearColor (0.1, 0.1, 0.1, 1.0);   // non-black background to help spot mistakes
 	glViewport (0, 0, g_gl_width, g_gl_height); // make sure correct aspect ratio
 
+	double now_time, old_time, time_delta;
+	now_time = old_time = 0.0f;
+
 /*-------------------------------RENDERING LOOP-------------------------------*/
 	while (!glfwWindowShouldClose (g_window)) {
 		// update timers
-		static double previous_seconds = glfwGetTime ();
-		double current_seconds = glfwGetTime ();
-		double elapsed_seconds = current_seconds - previous_seconds;
-		previous_seconds = current_seconds;
+		now_time = glfwGetTime();
+		time_delta = now_time - old_time;
+
 		_update_fps_counter (g_window);
+
+		if(time_delta >= 1.0f/frames_ps){
+			old_time = now_time;
+			time_delta = 0.0f;
+			uv_y += 1.0f;
+			if(uv_y >= ny_frames){
+				uv_y = 0.0f;
+			}
+
+		}
 		
 		vec3 position;
     	position.v[0] = model_player.m[12]; // X component of translation
@@ -206,7 +240,9 @@ unsigned int texture;
 		
 		// The following function will actually draw your previously dispatched/loaded Surface of Revolution
 		// YOU HAVE TO IMPLEMENT THIS FUNCTION IN stub.cpp	
+		
 		loadUniforms(shader_programme);
+
 
 		drawStage(shader_programme);
 		drawPlayer(shader_programme);

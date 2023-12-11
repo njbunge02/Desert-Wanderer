@@ -32,6 +32,9 @@ mat4 proj_mat;
 mat4 model_mat;
 mat4 model_player;
 
+float nx_frames = 1.0f, ny_frames = 6.0f;
+float uv_x = 1.0f, uv_y = 0.0f;
+
 bool isW;
 bool isA;
 bool isS;
@@ -80,6 +83,11 @@ void loadUniforms(GLuint shader_programme)
 	int view_mat_location  = glGetUniformLocation (shader_programme, "view_mat");
 	int proj_mat_location  = glGetUniformLocation (shader_programme, "proj_mat");
 	int model_player_location = glGetUniformLocation (shader_programme, "model_player");
+	
+	glUniform1f(glGetUniformLocation(shader_programme, "uv_x"), uv_x);
+	glUniform1f(glGetUniformLocation(shader_programme, "uv_y"), uv_y);
+	glUniform1f(glGetUniformLocation(shader_programme, "nx_frames"), nx_frames);
+	glUniform1f(glGetUniformLocation(shader_programme, "ny_frames"), ny_frames);
 	
 
 	glUniformMatrix4fv (view_mat_location, 1, GL_FALSE, view_mat.m);
