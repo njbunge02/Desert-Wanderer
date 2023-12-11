@@ -32,13 +32,19 @@ mat4 proj_mat;
 mat4 model_mat;
 mat4 model_player;
 
-extern float nx_frames, ny_frames;
-extern float uv_x, uv_y;
+
+extern float nx_frames;
+extern float ny_frames;
+extern float uv_x;
+extern float uv_y;
+
 
 bool isW;
 bool isA;
 bool isS;
 bool isD;
+float spriteX;
+float spriteY;
 
 using namespace std;
 
@@ -150,13 +156,15 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
 	//GLFW Reference Links:
 	// Callback Example: https://www.glfw.org/docs/3.3/input_guide.html#input_key
 	// List of Keys: https://www.glfw.org/docs/3.3/group__keys.html
-	
+	float movementSpeed = 0.001f;
     if (key == GLFW_KEY_W)
     {
 		 if (action == GLFW_PRESS) {
             isW = true;
+			spriteY = movementSpeed;
         } else if (action == GLFW_RELEASE) {
             isW = false;
+			spriteY = 0;
 		}
 
 	}
@@ -165,8 +173,10 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
 
 		 if (action == GLFW_PRESS) {
             isS = true;
+			spriteY = -movementSpeed;
         } else if (action == GLFW_RELEASE) {
             isS = false;
+			spriteY = 0;
 		}
 	}
 	 if (key == GLFW_KEY_A)
@@ -174,17 +184,20 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
 
 		 if (action == GLFW_PRESS) {
             isA = true;
+			spriteX = -movementSpeed;
         } else if (action == GLFW_RELEASE) {
             isA = false;
+			spriteX = 0;
 		}
 	}
 	 if (key == GLFW_KEY_D)
     {
-
 		 if (action == GLFW_PRESS) {
             isD = true;
+			spriteX = movementSpeed;
         } else if (action == GLFW_RELEASE) {
             isD = false;
+			spriteX = 0;
 		}
 	}
 
@@ -301,7 +314,7 @@ void generatePlatform(vector<float> &vertices, vector<float> &texCoords)
 void generatePlayer(vector<float> &vertices, vector<float> &texCoords)
 {
 	int offsetY = 0;
-	float height = 0.625f;
+	float height = 0.62f;
 	float x = height/2.0f;
 	//face 1, vertex 1
 	

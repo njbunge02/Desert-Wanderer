@@ -50,6 +50,14 @@ extern bool isA;
 extern bool isS;
 extern bool isD;
 
+bool idleFlag;
+
+extern float spriteX;
+extern float spriteY;
+
+int count;
+
+
 // the vector below indicates camra placement. 
 //It looks at (0,0,0) with (0,1,0) as the up-vector
 vec3 cam_pos (0.0f, 0.0f, 5.0f);
@@ -212,26 +220,46 @@ int main (int argc, char *argv[]) {
     	position.v[2] = model_player.m[14]; // Z component of translation
 
 		
+	
+
 		if (isW)
-			model_player = translate(model_player, vec3(0.0f, 0.001f, 0.0f));
-		else if (isA && position.v[0] > -2.4f)
-			model_player = translate(model_player, vec3(-0.001f, 0.0f, 0.0f));
+			{count = 0;
+			idleFlag = false;}
+		else if (isA)
+			{idleFlag = false;}
 		else if (isD){
-			if(position.v[0] < 2.4f){
-			model_player = translate(model_player, vec3(0.001f, 0.0f, 0.0f));
-			}
+		count = 0;
 			uv_y = 0.0f;
 			numXInAnimation = 8.0f;
+			idleFlag = false;
 		}
-		else if (isS && position.v[1] > -0.9f)
-			{
-			model_player = translate(model_player, vec3(0.0f, -0.001f, 0.0f));
-			}
-			
-		else if (now_time == old_time){
-			uv_y = 2.0f;
+		else if (isS)
+		{
+		count = 0;
+		idleFlag = false;
+		}else 
+		{
+		count++;
+		}
+
+		if (count > 50)
+		{	uv_y = 2.0f;
+		if (!idleFlag)
+		{
+			uv_x = 0.0f;
+		idleFlag = true;
+		}
 			numXInAnimation = 6.0f;
 		}
+
+
+		if (position.v[0] > -2.4f && position.v[0] < 2.4f)
+			model_player = translate(model_player, vec3(spriteX, 0.0f, 0.0f));
+		if (position.v[1] > -0.9f)
+			model_player = translate(model_player, vec3(0.0f, spriteY, 0.0f));
+			
+	
+			
 
 
 
