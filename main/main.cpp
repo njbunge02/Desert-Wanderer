@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <iostream>
 
 #include <math.h>
 #include <time.h>
@@ -36,6 +37,12 @@
 extern mat4 view_mat;
 extern mat4 proj_mat;
 extern mat4 model_mat;
+extern mat4 model_player;
+
+extern bool isW;
+extern bool isA;
+extern bool isS;
+extern bool isD;
 
 // the vector below indicates camra placement. 
 //It looks at (0,0,0) with (0,1,0) as the up-vector
@@ -43,9 +50,12 @@ vec3 cam_pos (0.0f, 0.0f, 5.0f);
 
 // Below are the declarations for three functions from stub.cpp 
 void loadSurfaceOfRevolution();
+
 void loadUniforms(GLuint shader_programme);
-void drawScene();
+void drawStage(GLuint shader_programme);
+void drawPlayer(GLuint shader_programme);
 void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int mods);
+
 
 // Forward Declaration
 // this function loads a .jpg or .png file into a previously activated texture map
@@ -130,6 +140,7 @@ int main (int argc, char *argv[]) {
 /*---------------------------SET RENDERING DEFAULTS---------------------------*/
 	// The model matrix stores the position and orientation transformations for your SoR
 
+	model_player = identity_mat4();
 	model_mat = identity_mat4();
 
 
@@ -151,6 +162,25 @@ int main (int argc, char *argv[]) {
 		previous_seconds = current_seconds;
 		_update_fps_counter (g_window);
 		
+		vec3 position;
+    	position.v[0] = model_player.m[12]; // X component of translation
+   		position.v[1] = model_player.m[13]; // Y component of translation
+    	position.v[2] = model_player.m[14]; // Z component of translation
+
+
+		if (isW)
+			model_player = translate(model_player, vec3(0.0f, 0.001f, 0.0f));
+		if (isA && position.v[0] > -2)
+			model_player = translate(model_player, vec3(-0.001f, 0.0f, 0.0f));
+		if (isD && position.v[0] < 2)
+			model_player = translate(model_player, vec3(0.001f, 0.0f, 0.0f));
+		if (isS && position.v[1] > -0.9f)
+			{
+			model_player = translate(model_player, vec3(0.0f, -0.001f, 0.0f));
+			}
+
+
+
 		// clear graphics context
 		glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
@@ -160,12 +190,15 @@ int main (int argc, char *argv[]) {
 
 		// load uniform variables for shaders
 		// YOU HAVE TO IMPLEMENT THIS FUNCTION IN stub.cpp	
-		loadUniforms(shader_programme);
+
 		
 		
 		// The following function will actually draw your previously dispatched/loaded Surface of Revolution
 		// YOU HAVE TO IMPLEMENT THIS FUNCTION IN stub.cpp	
-		drawScene();
+		loadUniforms(shader_programme);
+
+		drawStage(shader_programme);
+		drawPlayer(shader_programme);
 
 		// update other events like input handling 
 		glfwPollEvents ();
