@@ -41,8 +41,8 @@ extern mat4 proj_mat;
 extern mat4 model_mat;
 extern mat4 model_player;
 
-extern float nx_frames, ny_frames;
-extern float uv_x, uv_y;
+float nx_frames = 10.0f, ny_frames = 3.0f;
+float uv_x = 1.0f, uv_y = 2.0f;
 double numXInAnimation = 6.0f;
 
 extern bool isW;
@@ -211,17 +211,27 @@ int main (int argc, char *argv[]) {
    		position.v[1] = model_player.m[13]; // Y component of translation
     	position.v[2] = model_player.m[14]; // Z component of translation
 
-
+		
 		if (isW)
 			model_player = translate(model_player, vec3(0.0f, 0.001f, 0.0f));
-		if (isA && position.v[0] > -2.4f)
+		else if (isA && position.v[0] > -2.4f)
 			model_player = translate(model_player, vec3(-0.001f, 0.0f, 0.0f));
-		if (isD && position.v[0] < 2.4f)
+		else if (isD){
+			if(position.v[0] < 2.4f){
 			model_player = translate(model_player, vec3(0.001f, 0.0f, 0.0f));
-		if (isS && position.v[1] > -.87)
+			}
+			uv_y = 0.0f;
+			numXInAnimation = 8.0f;
+		}
+		else if (isS && position.v[1] > -0.9f)
 			{
 			model_player = translate(model_player, vec3(0.0f, -0.001f, 0.0f));
 			}
+			
+		else if (now_time == old_time){
+			uv_y = 2.0f;
+			numXInAnimation = 6.0f;
+		}
 
 
 

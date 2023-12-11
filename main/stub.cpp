@@ -32,8 +32,8 @@ mat4 proj_mat;
 mat4 model_mat;
 mat4 model_player;
 
-float nx_frames = 10.0f, ny_frames = 3.0f;
-float uv_x = 1.0f, uv_y = 2.0f;
+extern float nx_frames, ny_frames;
+extern float uv_x, uv_y;
 
 bool isW;
 bool isA;
