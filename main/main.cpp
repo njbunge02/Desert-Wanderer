@@ -75,13 +75,6 @@ bool load_texture (const char* file_name, GLuint* tex);
 |******************************************************************************/
 
 int main (int argc, char *argv[]) {
-	if (argc < 4)
-	{
-		printf("\nEnter atleast 3 filenames to run this program: (1) vtx_shader, (2) frag_shader, (3) texture_1\n");
-		printf("\nQuiting now...\n");
-		
-		return 0;
-	}
 /*--------------------------------START OPENGL--------------------------------*/
 	assert (restart_gl_log ());
 	assert (start_gl ());        // Start glfw window with GL context within.
@@ -95,7 +88,7 @@ int main (int argc, char *argv[]) {
     // The vertex shader program generally acts to transform vertices.
     // The fragment shader is where we'll do the actual "shading."
 	GLuint shader_programme = create_programme_from_files (
-		argv[1], argv[2]
+		"vs.glsl", "frag.glsl"
 	);
 
 	glUseProgram (shader_programme);
@@ -107,16 +100,9 @@ int main (int argc, char *argv[]) {
 	int tex00location = glGetUniformLocation (shader_programme, "texture00");
 	glUniform1i (tex00location, 0);
 	glActiveTexture (GL_TEXTURE0);
-	assert (load_texture (argv[3], &tex00));
+	assert (load_texture ("atlas.jpg", &tex00));
 
-	GLuint tex01;
-	int tex01location = glGetUniformLocation (shader_programme, "texture01");
-	glUniform1i (tex01location, 1);
-	glActiveTexture (GL_TEXTURE1);
-	if(argc < 5)
-		assert (load_texture (argv[3], &tex01));
-	else
-		assert (load_texture (argv[4], &tex01));
+
 
 	
 /*-------------------------------CREATE CAMERA--------------------------------*/
