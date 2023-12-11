@@ -45,6 +45,7 @@ using namespace std;
 vector<float> floorVerts;
 vector<float> floorTexCoords;
 vector<float> platVerts;
+vector<float> platTexCoords;
 
 
 vector<float> playerVerts;
@@ -56,7 +57,7 @@ GLuint platVao;
 
 
 void generateFloor(vector<float> &vertices, vector<float> &texCoords);
-void generatePlatform(vector<float> &vertices);
+void generatePlatform(vector<float> &vertices, vector<float> &texCoords);
 void generatePlayer(vector<float> &vertices, vector<float>& texCoords);
 void loadFloor();
 void loadPlayer();
@@ -68,11 +69,11 @@ void loadSurfaceOfRevolution()
 /*------------------------------CREATE GEOMETRY-------------------------------*/
 	
 	generateFloor(floorVerts, floorTexCoords);
-	//generatePlatform(platVerts);
+	generatePlatform(platVerts, platTexCoords);
 	generatePlayer(playerVerts, playerTexCoords);
 	loadFloor();
 	loadPlayer();
-	//loadPlatform();
+	loadPlatform();
 	
 
 }
@@ -112,8 +113,8 @@ void drawStage(GLuint shader_programme)
 	glBindVertexArray(floorVao);
 	
 
-	GLint textOn = glGetUniformLocation(shader_programme, "textureOn");
-	glUniform1i(textOn, 0);
+	GLint textureN = glGetUniformLocation(shader_programme, "textureNum");
+	glUniform1i(textureN, 1);
 
 	GLint isPlayer_loc = glGetUniformLocation(shader_programme, "isPlayer");
 	glUniform1i(isPlayer_loc, 0);
@@ -121,8 +122,8 @@ void drawStage(GLuint shader_programme)
     glDrawArrays(GL_TRIANGLES, 0, floorVerts.size());
 
 
-	/*glBindVertexArray(platVao);
-    glDrawArrays(GL_TRIANGLES, 0, platVerts.size());*/
+	glBindVertexArray(platVao);
+    glDrawArrays(GL_TRIANGLES, 0, platVerts.size());
 
 }
 
@@ -132,8 +133,8 @@ void drawPlayer(GLuint shader_programme)
 	// WRITE CODE TO LOAD OTHER UNIFORM VARIABLES LIKE FLAGS FOR ENABLING OR DISABLING CERTAIN FUNCTIONALITIES
 	glBindVertexArray(playerVao);
 
-	GLint textOn = glGetUniformLocation(shader_programme, "textureOn");
-	glUniform1i(textOn, 1);
+	GLint textureN = glGetUniformLocation(shader_programme, "textureNum");
+	glUniform1i(textureN, 0);
 	GLint isPlayer_loc = glGetUniformLocation(shader_programme, "isPlayer");
 	glUniform1i(isPlayer_loc, 1);
 	
@@ -199,7 +200,7 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
 void generateFloor(vector<float> &vertices, vector<float> &texCoords)
 {	
 	int offsetY = -1;
-	float height = 0.3;
+	float height = 0.2;
 	float x = 2.5;
 	
 	
@@ -249,11 +250,12 @@ void generateFloor(vector<float> &vertices, vector<float> &texCoords)
 }
 
 
-void generatePlatform(vector<float> &vertices)
+void generatePlatform(vector<float> &vertices, vector<float> &texCoords)
 {	
-	int offsetY = 0;
+	float offsetY = -0.25;
 	int offsetX=0;
 	float x = 0.75;
+	float height = 0.2;
 	//face 1, vertex 1
 	vertices.push_back(-x + offsetX);
 	vertices.push_back(0 + offsetY);
@@ -264,12 +266,12 @@ void generatePlatform(vector<float> &vertices)
 	vertices.push_back(0);
 	//face 1, vertex 3
 	vertices.push_back(-x+ offsetX);
-	vertices.push_back(0.1+ offsetY);
+	vertices.push_back(height + offsetY);
 	vertices.push_back(0);
 
 	//face 2, vertex 1
 	vertices.push_back(-x+ offsetX);
-	vertices.push_back(0.1+ offsetY);
+	vertices.push_back(height + offsetY);
 	vertices.push_back(0);
 	//face 2, vertex 2
 	vertices.push_back(x+ offsetX);
@@ -277,8 +279,22 @@ void generatePlatform(vector<float> &vertices)
 	vertices.push_back(0);
 	//face 2, vertex 3
 	vertices.push_back(x+ offsetX);
-	vertices.push_back(0.1+ offsetY);
+	vertices.push_back(height + offsetY);
 	vertices.push_back(0);
+
+	texCoords.push_back(0.0f); // Texture coordinate for vertex 1 of face 1 (bottom-left)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.5f); // Texture coordinate for vertex 2 of face 1 (bottom-right)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(0.0f); // Texture coordinate for vertex 3 of face 1 (top-left)
+    texCoords.push_back(1.0f);
+    // Texture coordinate for vertex 1 of face 2 (top-left)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.0f);
+    texCoords.push_back(1.5f); // Texture coordinate for vertex 2 of face 2 (bottom-right)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.5f); // Texture coordinate for vertex 3 of face 2 (top-right)
+    texCoords.push_back(1.0f);
 
 }
 
@@ -371,6 +387,12 @@ void loadPlatform()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(0);
 
+	GLuint texcoords_vbo;
+    glGenBuffers(1, &texcoords_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, texcoords_vbo);
+    glBufferData(GL_ARRAY_BUFFER, platTexCoords.size() * sizeof(float), platTexCoords.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(2);
 
 }
 

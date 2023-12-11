@@ -2,7 +2,7 @@
 
 uniform sampler2D textureSampler;
 
-uniform int textureOn;
+uniform int textureNum;
 
 uniform float ny_frames;
 uniform float nx_frames;
@@ -24,7 +24,7 @@ void main() {
 
   
 
-  if (textureOn == 1)
+    if (textureNum == 0)
     {
      float frameXHeight = 1.0f / nx_frames;
     float frameYHeight = 1.0f / ny_frames;
@@ -32,7 +32,7 @@ void main() {
     vec2 texCoord = vec2(textureCoordinates.x * frameXHeight, textureCoordinates.y * frameYHeight) + frameOffset;
     fragColor = texture(textureSampler, texCoord);
 
-    }else
+    }else if (textureNum == 1) //floor and platform
     {
         vec2 modifiedTexCoord = vec2(textureCoordinates.x * 5, textureCoordinates.y);
        fragColor = texture(textureSampler, modifiedTexCoord);
