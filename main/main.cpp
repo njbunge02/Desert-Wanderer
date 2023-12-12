@@ -64,7 +64,7 @@ int count;
 
 //z coordinate of player and back
 float playerZ = 0.01f;
-float backZ = -0.01f;
+
 
 
 // the vector below indicates camra placement. 
@@ -77,7 +77,18 @@ void loadSurfaceOfRevolution();
 void loadUniforms(GLuint shader_programme);
 void drawStage(GLuint shader_programme);
 void drawPlayer(GLuint shader_programme);
-void drawBackGround(GLuint shader_programme);
+
+
+
+
+void drawSky(GLuint shader_programme);
+void drawForeGround(GLuint shader_programme);
+void drawMtn(GLuint shader_programme);
+void drawBackMtn(GLuint shader_programme);
+void drawGround(GLuint shader_programme);
+
+
+
 void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int mods);
 void moveCameraRight(mat4& view_mat);
 void moveCameraLeft(mat4& view_mat);
@@ -167,26 +178,96 @@ int main (int argc, char *argv[]) {
     stbi_image_free(img_data1);
 
 
-	unsigned int texture2;
-    glGenTextures(1, &texture2);
-    glBindTexture(GL_TEXTURE_2D, texture2);
+	unsigned int sky;
+    glGenTextures(1, &sky);
+    glBindTexture(GL_TEXTURE_2D, sky);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     int width2, height2, nrChannels2;
-    unsigned char *img_data2 = stbi_load("back.jpg", &width2, &height2, &nrChannels2, 0);
+    unsigned char *img_data2 = stbi_load("back.png", &width2, &height2, &nrChannels2, 0);
     if(!img_data2) {
         fprintf(stderr, "Failed loading image!\n");
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
 	//loaded in as RGB instead of RGBA
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, img_data2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data2);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(img_data2);
+
+
+
+	unsigned int mtn;
+    glGenTextures(1, &mtn);
+    glBindTexture(GL_TEXTURE_2D, mtn);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    int width3, height3, nrChannels3;
+    unsigned char *img_data3 = stbi_load("mtn.png", &width3, &height3, &nrChannels3, 0);
+    if(!img_data3) {
+        fprintf(stderr, "Failed loading image!\n");
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+	//loaded in as RGB instead of RGBA
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width3, height3, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data3);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(img_data3);
+
+
+unsigned int backMtn;
+    glGenTextures(1, &backMtn);
+    glBindTexture(GL_TEXTURE_2D, backMtn);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    int width4, height4, nrChannels4;
+    unsigned char *img_data4= stbi_load("backmtn.png", &width4, &height4, &nrChannels4, 0);
+    if(!img_data4) {
+        fprintf(stderr, "Failed loading image!\n");
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+	//loaded in as RGB instead of RGBA
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width4, height4, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data4);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(img_data4);
+
+
+
+	unsigned int foreground;
+    glGenTextures(1, &foreground);
+    glBindTexture(GL_TEXTURE_2D, foreground);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    int width5, height5, nrChannels5;
+    unsigned char *img_data5= stbi_load("foreground.png", &width5, &height5, &nrChannels5, 0);
+    if(!img_data5) {
+        fprintf(stderr, "Failed loading image!\n");
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+	//loaded in as RGB instead of RGBA
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width5, height5, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data5);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(img_data5);
+
+
 	
 	
 
@@ -462,8 +543,28 @@ int jumpCount = 0;
 
     // Bind the texture to GL_TEXTURE0 (if that's the texture unit index you're using)
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture2); // Bind your desired texture to the unit
-	drawBackGround(shader_programme);
+    glBindTexture(GL_TEXTURE_2D, sky); // Bind your desired texture to the unit
+	drawSky(shader_programme);
+
+
+	glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0); 
+
+    // Bind the texture to GL_TEXTURE0 (if that's the texture unit index you're using)
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, backMtn); // Bind your desired texture to the unit
+	drawBackMtn(shader_programme);
+
+	glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0); 
+
+    // Bind the texture to GL_TEXTURE0 (if that's the texture unit index you're using)
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, mtn); // Bind your desired texture to the unit
+	drawMtn(shader_programme);
+
+	
+
+
+
 
 
 
@@ -482,6 +583,13 @@ int jumpCount = 0;
 
 	drawPlayer(shader_programme);
 
+	drawStage(shader_programme);
+	glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0); 
+    // Bind the texture to GL_TEXTURE0 (if that's the texture unit index you're using)
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, foreground); // Bind your desired texture to the unit
+
+	drawForeGround(shader_programme);
  	
 	
 

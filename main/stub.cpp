@@ -38,7 +38,7 @@ extern float ny_frames;
 extern float uv_x;
 extern float uv_y;
 extern float playerZ;
-extern float backZ;
+
 
 
 
@@ -65,8 +65,17 @@ vector<float> floorTexCoords;
 vector<float> platVerts;
 vector<float> platTexCoords;
 
-vector<float> backgroundVerts;
-vector<float> backgroundTexCoords;
+vector<float> skyVerts;
+vector<float> skyTexCoords;
+
+vector<float> mtnVerts;
+vector<float> mtnTexCoords;
+
+vector<float> backMtnVerts;
+vector<float> backMtnTexCoords;
+
+vector<float> foreGroundVerts;
+vector<float> foreGroundTexCoords;
 
 
 vector<float> playerVerts;
@@ -75,21 +84,35 @@ vector<float> playerTexCoords;
 GLuint playerVao;
 GLuint floorVao;
 GLuint platVao;
-GLuint backVao;
+
+GLuint skyVao;
+GLuint mtnVao;
+GLuint backMtnVao;
+GLuint foreGroundVao;
+
 
 
 //creates vertices and texture coordinates
 void generateFloor(vector<float> &vertices, vector<float> &texCoords);
 void generatePlatform(vector<float> &vertices, vector<float> &texCoords);
 void generatePlayer(vector<float> &vertices, vector<float>& texCoords);
-void generateBackground(vector<float> &vertices, vector<float>& texCoords);
+
+void generateSky(vector<float> &vertices, vector<float>& texCoords);
+void generateMtn(vector<float> &vertices, vector<float>& texCoords);
+void generateBackMtn(vector<float> &vertices, vector<float>& texCoords);
+void generateForeGround(vector<float> &vertices, vector<float>& texCoords);
 
 
 //creates their VBOs and VAOs
 void loadFloor();
 void loadPlayer();
 void loadPlatform();
-void loadBackground();
+
+void loadSky();
+void loadMtn();
+void loadBackMtn();
+void loadForeGround();
+
 
 
 void loadSurfaceOfRevolution() 
@@ -99,9 +122,16 @@ void loadSurfaceOfRevolution()
 	generateFloor(floorVerts, floorTexCoords);
 	generatePlatform(platVerts, platTexCoords);
 	generatePlayer(playerVerts, playerTexCoords);
-	generateBackground(backgroundVerts, backgroundTexCoords);
+	generateSky(skyVerts, skyTexCoords);
+	generateBackMtn(backMtnVerts, backMtnTexCoords);
+	generateMtn(mtnVerts, mtnTexCoords);
+	generateForeGround(foreGroundVerts, foreGroundTexCoords);
 
-	loadBackground();
+	loadForeGround();
+	loadSky();
+	loadBackMtn();
+	loadMtn();
+
 	loadFloor();
 	loadPlayer();
 	loadPlatform();
@@ -158,10 +188,11 @@ void drawStage(GLuint shader_programme)
 
 }
 
-void drawBackGround(GLuint shader_programme)
-{
 
-	glBindVertexArray(backVao);
+
+void drawSky(GLuint shader_programme)
+{
+glBindVertexArray(skyVao);
 
 	//changes the texture to the sunset in frag shader
 	GLint textureN = glGetUniformLocation(shader_programme, "textureNum");
@@ -172,8 +203,59 @@ void drawBackGround(GLuint shader_programme)
 	glUniform1i(isPlayer_loc, 0);
 
 	//draws background
-    glDrawArrays(GL_TRIANGLES, 0, backgroundVerts.size());
+    glDrawArrays(GL_TRIANGLES, 0, skyVerts.size());
 }
+
+void drawForeGround(GLuint shader_programme)
+{
+	glBindVertexArray(foreGroundVao);
+//changes the texture to the sunset in frag shader
+	GLint textureN = glGetUniformLocation(shader_programme, "textureNum");
+	glUniform1i(textureN, 2);
+
+	//changes is player value to false so the model matrix is not the player matrix
+	GLint isPlayer_loc = glGetUniformLocation(shader_programme, "isPlayer");
+	glUniform1i(isPlayer_loc, 0);
+
+	//draws background
+    glDrawArrays(GL_TRIANGLES, 0, foreGroundVerts.size());
+}
+void drawMtn(GLuint shader_programme)
+{
+glBindVertexArray(mtnVao);
+
+	//changes the texture to the sunset in frag shader
+	GLint textureN = glGetUniformLocation(shader_programme, "textureNum");
+	glUniform1i(textureN, 2);
+
+	//changes is player value to false so the model matrix is not the player matrix
+	GLint isPlayer_loc = glGetUniformLocation(shader_programme, "isPlayer");
+	glUniform1i(isPlayer_loc, 0);
+
+	//draws background
+    glDrawArrays(GL_TRIANGLES, 0, mtnVerts.size());
+}
+
+void drawBackMtn(GLuint shader_programme)
+{
+glBindVertexArray(backMtnVao);
+
+	//changes the texture to the sunset in frag shader
+	GLint textureN = glGetUniformLocation(shader_programme, "textureNum");
+	glUniform1i(textureN, 2);
+
+	//changes is player value to false so the model matrix is not the player matrix
+	GLint isPlayer_loc = glGetUniformLocation(shader_programme, "isPlayer");
+	glUniform1i(isPlayer_loc, 0);
+
+	//draws background
+    glDrawArrays(GL_TRIANGLES, 0, backMtnVerts.size());
+}
+
+
+
+
+
 
 void drawPlayer(GLuint shader_programme)
 {
@@ -410,12 +492,65 @@ void generatePlayer(vector<float> &vertices, vector<float> &texCoords)
 
 }
 
-void generateBackground(vector<float> &vertices, vector<float>& texCoords)
+void generateSky(vector<float> &vertices, vector<float>& texCoords)
+{
+	float offsetX = 1.0f;
+	float offsetY = -1;
+	float scale = 6.0f;
+	float height = 3.0f * scale;
+	float x = 4.0f * scale;
+	float backZ = -30.0f;
+	//face 1, vertex 1
+	
+	vertices.push_back(-1 * x + offsetX);
+	vertices.push_back(offsetY);
+	vertices.push_back(backZ);
+	//face 1, vertex 2
+	vertices.push_back(x+ offsetX);
+	vertices.push_back(offsetY);
+	vertices.push_back(backZ);
+	//face 1, vertex 3
+	vertices.push_back(-1 * x+ offsetX);
+	vertices.push_back(height + offsetY);
+	vertices.push_back(backZ);
+
+	//face 2, vertex 1
+	vertices.push_back(-1 * x - 0.01f+ offsetX);
+	vertices.push_back(height + offsetY);
+	vertices.push_back(backZ);
+	//face 2, vertex 2
+	vertices.push_back(x - 0.01f+ offsetX);
+	vertices.push_back(offsetY);
+	vertices.push_back(backZ);
+	//face 2, vertex 3
+	vertices.push_back(x+ offsetX);
+	vertices.push_back(height + offsetY);
+	vertices.push_back(backZ);
+
+	texCoords.push_back(0.0f); // Texture coordinate for vertex 1 of face 1 (bottom-left)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.0f); // Texture coordinate for vertex 2 of face 1 (bottom-right)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(0.0f); // Texture coordinate for vertex 3 of face 1 (top-left)
+    texCoords.push_back(1.0f);
+    // Texture coordinate for vertex 1 of face 2 (top-left)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.0f);
+    texCoords.push_back(1.0f); // Texture coordinate for vertex 2 of face 2 (bottom-right)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.0f); // Texture coordinate for vertex 3 of face 2 (top-right)
+    texCoords.push_back(1.0f);
+
+}
+
+void generateMtn(vector<float> &vertices, vector<float>& texCoords)
 {
 
-	float offsetY = -2;
-	float height = 3.75f;
-	float x = 5.0f;
+	float offsetY = -8.0f - 1.0f;
+	float scale = 4.0f;
+	float height = 3.0f * scale;
+	float x = 4.0f * scale;
+	float backZ = -20.0f;
 	//face 1, vertex 1
 	
 	vertices.push_back(-1 * x);
@@ -424,7 +559,7 @@ void generateBackground(vector<float> &vertices, vector<float>& texCoords)
 	//face 1, vertex 2
 	vertices.push_back(x);
 	vertices.push_back(offsetY);
-	vertices.push_back(0);
+	vertices.push_back(backZ);
 	//face 1, vertex 3
 	vertices.push_back(-1 * x);
 	vertices.push_back(height + offsetY);
@@ -459,6 +594,109 @@ void generateBackground(vector<float> &vertices, vector<float>& texCoords)
 
 }
 
+void generateBackMtn(vector<float> &vertices, vector<float>& texCoords)
+{
+	float offsetX = 6.0f;
+	float offsetY = -2.5f - 1.0f;
+	float scale = 2.2f;
+	float height = 3.0f * scale;
+	float x = 4.0f * scale;
+	float backZ = -25.0f;
+	//face 1, vertex 1
+	
+	vertices.push_back(-1 * x + offsetX);
+	vertices.push_back(offsetY);
+	vertices.push_back(backZ);
+	//face 1, vertex 2
+	vertices.push_back(x+ offsetX);
+	vertices.push_back(offsetY);
+	vertices.push_back(backZ);
+	//face 1, vertex 3
+	vertices.push_back(-1 * x+ offsetX);
+	vertices.push_back(height + offsetY);
+	vertices.push_back(backZ);
+
+	//face 2, vertex 1
+	vertices.push_back(-1 * x - 0.01f+ offsetX);
+	vertices.push_back(height + offsetY);
+	vertices.push_back(backZ);
+	//face 2, vertex 2
+	vertices.push_back(x - 0.01f+ offsetX);
+	vertices.push_back(offsetY);
+	vertices.push_back(backZ);
+	//face 2, vertex 3
+	vertices.push_back(x+ offsetX);
+	vertices.push_back(height + offsetY);
+	vertices.push_back(backZ);
+
+	texCoords.push_back(0.0f); // Texture coordinate for vertex 1 of face 1 (bottom-left)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.0f); // Texture coordinate for vertex 2 of face 1 (bottom-right)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(0.0f); // Texture coordinate for vertex 3 of face 1 (top-left)
+    texCoords.push_back(1.0f);
+    // Texture coordinate for vertex 1 of face 2 (top-left)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.0f);
+    texCoords.push_back(1.0f); // Texture coordinate for vertex 2 of face 2 (bottom-right)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.0f); // Texture coordinate for vertex 3 of face 2 (top-right)
+    texCoords.push_back(1.0f);
+
+}
+
+
+
+void generateForeGround(vector<float> &vertices, vector<float>& texCoords)
+{
+	float offsetX = 1.5f;
+	float offsetY = -1.9f;
+	float scale = 0.5f;
+	float height = 3.0f * scale;
+	float x = 4.0f * scale;
+	float backZ = 1.0f;
+	//face 1, vertex 1
+	
+	vertices.push_back(-1 * x + offsetX);
+	vertices.push_back(offsetY);
+	vertices.push_back(backZ);
+	//face 1, vertex 2
+	vertices.push_back(x+ offsetX);
+	vertices.push_back(offsetY);
+	vertices.push_back(backZ);
+	//face 1, vertex 3
+	vertices.push_back(-1 * x+ offsetX);
+	vertices.push_back(height + offsetY);
+	vertices.push_back(backZ);
+
+	//face 2, vertex 1
+	vertices.push_back(-1 * x - 0.01f+ offsetX);
+	vertices.push_back(height + offsetY);
+	vertices.push_back(backZ);
+	//face 2, vertex 2
+	vertices.push_back(x - 0.01f+ offsetX);
+	vertices.push_back(offsetY);
+	vertices.push_back(backZ);
+	//face 2, vertex 3
+	vertices.push_back(x+ offsetX);
+	vertices.push_back(height + offsetY);
+	vertices.push_back(backZ);
+
+	texCoords.push_back(0.0f); // Texture coordinate for vertex 1 of face 1 (bottom-left)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.0f); // Texture coordinate for vertex 2 of face 1 (bottom-right)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(0.0f); // Texture coordinate for vertex 3 of face 1 (top-left)
+    texCoords.push_back(1.0f);
+    // Texture coordinate for vertex 1 of face 2 (top-left)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.0f);
+    texCoords.push_back(1.0f); // Texture coordinate for vertex 2 of face 2 (bottom-right)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.0f); // Texture coordinate for vertex 3 of face 2 (top-right)
+    texCoords.push_back(1.0f);
+
+}
 
 
 void loadFloor()
@@ -532,25 +770,94 @@ void loadPlayer()
 
 }
 
-void loadBackground()
+void loadSky()
 {
 	// VAO -- vertex attribute objects bundle the various things associated with vertices
-	glGenVertexArrays (1, &backVao);   // generating and binding is common pattern in OpenGL
-	glBindVertexArray (backVao);       // basically setting up memory and associating it
+	glGenVertexArrays (1, &skyVao);   // generating and binding is common pattern in OpenGL
+	glBindVertexArray (skyVao);       // basically setting up memory and associating it
 
 	// VBO -- vertex buffer object to contain coordinates
 
 	GLuint points_vbo;
 	glGenBuffers(1, &points_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-	glBufferData(GL_ARRAY_BUFFER, backgroundVerts.size() * sizeof(float), backgroundVerts.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, skyVerts.size() * sizeof(float), skyVerts.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(0);
 
 	GLuint texcoords_vbo;
     glGenBuffers(1, &texcoords_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, texcoords_vbo);
-    glBufferData(GL_ARRAY_BUFFER, backgroundTexCoords.size() * sizeof(float), backgroundTexCoords.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, skyTexCoords.size() * sizeof(float), skyTexCoords.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(2);
+}
+
+void loadMtn()
+{
+	// VAO -- vertex attribute objects bundle the various things associated with vertices
+	glGenVertexArrays (1, &mtnVao);   // generating and binding is common pattern in OpenGL
+	glBindVertexArray (mtnVao);       // basically setting up memory and associating it
+
+	// VBO -- vertex buffer object to contain coordinates
+
+	GLuint points_vbo;
+	glGenBuffers(1, &points_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+	glBufferData(GL_ARRAY_BUFFER, mtnVerts.size() * sizeof(float), mtnVerts.data(), GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(0);
+
+	GLuint texcoords_vbo;
+    glGenBuffers(1, &texcoords_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, texcoords_vbo);
+    glBufferData(GL_ARRAY_BUFFER, mtnTexCoords.size() * sizeof(float), mtnTexCoords.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(2);
+}
+
+void loadBackMtn()
+{
+	// VAO -- vertex attribute objects bundle the various things associated with vertices
+	glGenVertexArrays (1, &backMtnVao);   // generating and binding is common pattern in OpenGL
+	glBindVertexArray (backMtnVao);       // basically setting up memory and associating it
+
+	// VBO -- vertex buffer object to contain coordinates
+
+	GLuint points_vbo;
+	glGenBuffers(1, &points_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+	glBufferData(GL_ARRAY_BUFFER, backMtnVerts.size() * sizeof(float), backMtnVerts.data(), GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(0);
+
+	GLuint texcoords_vbo;
+    glGenBuffers(1, &texcoords_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, texcoords_vbo);
+    glBufferData(GL_ARRAY_BUFFER, backMtnTexCoords.size() * sizeof(float), backMtnTexCoords.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(2);
+}
+
+void loadForeGround()
+{
+	// VAO -- vertex attribute objects bundle the various things associated with vertices
+	glGenVertexArrays (1, &foreGroundVao);   // generating and binding is common pattern in OpenGL
+	glBindVertexArray (foreGroundVao);       // basically setting up memory and associating it
+
+	// VBO -- vertex buffer object to contain coordinates
+
+	GLuint points_vbo;
+	glGenBuffers(1, &points_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+	glBufferData(GL_ARRAY_BUFFER, foreGroundVerts.size() * sizeof(float), foreGroundVerts.data(), GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(0);
+
+	GLuint texcoords_vbo;
+    glGenBuffers(1, &texcoords_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, texcoords_vbo);
+    glBufferData(GL_ARRAY_BUFFER, foreGroundTexCoords.size() * sizeof(float), foreGroundTexCoords.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
     glEnableVertexAttribArray(2);
 }
