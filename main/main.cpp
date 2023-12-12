@@ -228,6 +228,8 @@ int main (int argc, char *argv[]) {
 	glViewport (0, 0, g_gl_width, g_gl_height); // make sure correct aspect ratio
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glfwSwapInterval( 1 );
+	
 
 
 	double now_time, old_time, time_delta;
@@ -252,7 +254,7 @@ int jumpCount = 0;
         now_time = glfwGetTime();
         time_delta = now_time - old_time;
 		if(!jumpTrigger && !fallFlag){
-			frames_ps = 8.0f;
+			frames_ps = 30.0f;
 			jumpCount = 0;
 			if(time_delta >= 1.0f / frames_ps) {
 				old_time = now_time;
@@ -264,7 +266,7 @@ int jumpCount = 0;
 			}
 		}
 		else{
-			frames_ps = 4.0f;
+			frames_ps = 15.0f;
 			if(time_delta >= 1.0f / frames_ps && uv_x <= 4){
 				old_time = now_time;
 				time_delta = 0.0f;
