@@ -21,25 +21,25 @@ void main() {
 
   
 
-    if (textureNum == 0)
+    if (textureNum == 0)    //sprite texture
     {
      float frameXHeight = 1.0f / nx_frames;
     float frameYHeight = 1.0f / ny_frames;
     vec2 frameOffset = vec2(uv_x * frameXHeight, uv_y * frameYHeight); 
     vec2 texCoord;
 
-    if (reverse == 0)
+    if (reverse == 0)   
         texCoord = vec2(textureCoordinates.x * frameXHeight, textureCoordinates.y * frameYHeight) + frameOffset;
     else
         texCoord = vec2((1.0 - textureCoordinates.x) * frameXHeight, textureCoordinates.y * frameYHeight) + frameOffset;
 
     fragColor = texture(textureSampler, texCoord);
 
-    }else if (textureNum == 1) //floor and platform
+    }else if (textureNum == 1) //floor and platform texture
     {
         vec2 modifiedTexCoord = vec2(textureCoordinates.x * 5, textureCoordinates.y);
        fragColor = texture(textureSampler, modifiedTexCoord);
-    }else
+    }else //background texture
     {
        fragColor = texture(textureSampler, textureCoordinates);
     }

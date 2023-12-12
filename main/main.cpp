@@ -53,12 +53,16 @@ extern bool isS;
 extern bool isD;
 extern bool jumpTrigger;
 
+//on if the sprite is idling
 bool idleFlag;
 
 extern float spriteX;
 extern float spriteY;
 
+//keeps count of cycles since key is released
 int count;
+
+//z coordinate of player and back
 float playerZ = 0.01f;
 float backZ = -0.01f;
 
@@ -176,6 +180,7 @@ int main (int argc, char *argv[]) {
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
+	//loaded in as RGB instead of RGBA
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, img_data2);
     glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -230,8 +235,8 @@ int main (int argc, char *argv[]) {
 
 float jumpVelocity = 0.0f; // Initial jump velocity
 float gravity = 0.00005f; // Gravity acting on the player
-bool first = true;
-bool OnPlat = false;
+bool first = true;	//the first time the jump loop is entered
+bool OnPlat = false;	//true if player is on platform
 
 
 	while (!glfwWindowShouldClose (g_window)) {
@@ -268,7 +273,7 @@ bool OnPlat = false;
 			GLint textScale = glGetUniformLocation(shader_programme, "reverse");
 			glUniform1i(textScale, 1);
 			count = 0;
-			if (!jumpTrigger)
+			if (!jumpTrigger)	//changes animation if its not jumping
 			{uv_y = 0.0f;
 			numXInAnimation = 8.0f;}
 			}
@@ -276,7 +281,7 @@ bool OnPlat = false;
 			GLint textScale = glGetUniformLocation(shader_programme, "reverse");
 			glUniform1i(textScale, 0);
 		count = 0;
-			if (!jumpTrigger)
+			if (!jumpTrigger) //changes animation if its not jumping
 			{uv_y = 0.0f;
 			numXInAnimation = 8.0f;
 			idleFlag = false;
@@ -291,7 +296,7 @@ bool OnPlat = false;
 		count++;
 		}
 
-		if (count > 50)
+		if (count > 50)	//makes sure 50 cycles pass before it switches to idle animation after key release
 		{	uv_y = 2.0f;
 		if (!idleFlag)
 		{
@@ -303,12 +308,12 @@ bool OnPlat = false;
 
 
 
-
-		if (position.v[0] + spriteX > -2.4f && position.v[0] + spriteX < 2.4f)
+	//moves player left and right
+		if (position.v[0] + spriteX > -2.4f && position.v[0] + spriteX < 2.4f)	//determines if player is in border bounds
 		{
-			if ((position.v[0] > -0.75f && position.v[0] < 0.75f && position.v[1] < 0.70f && position.v[1] > 0.25f))
+			if ((position.v[0] > -0.75f && position.v[0] < 0.75f && position.v[1] < 0.70f && position.v[1] > 0.25f))	//determines if player is in the platform 
 			{
-				if(abs(position.v[0] + 0.75f) <= abs(position.v[0] - 0.75))
+				if(abs(position.v[0] + 0.75f) <= abs(position.v[0] - 0.75))	//determines which side the player is closest to and moves them out of the platform
 				{
 					model_player = translate(model_player, vec3(-0.00125f, 0.0f, 0.0f));
 				} else
@@ -317,28 +322,27 @@ bool OnPlat = false;
 				}
 			} else
 				model_player = translate(model_player, vec3(spriteX, 0.0f, 0.0f));
-				
-				}
+		}
 	
 			
 			
-
+	//jump animation
 		if (jumpTrigger)
 		{
-			if (first)
+			if (first)	//if first time entering jump loop
 				{
-					jumpVelocity = 0.01f;
+					jumpVelocity = 0.01f;	//set it to intial velocity 
 					first = false;
 				}
 			
 			uv_y = 1.0f;
 			numXInAnimation = 10.0f;
 			jumpVelocity -= gravity;
-			if (position.v[1] + jumpVelocity > 0 )
+			if (position.v[1] + jumpVelocity > 0 )	//if sprite is above floor
 			{
-				if (position.v[0] > -0.75f && position.v[0] < 0.75f && !OnPlat)
+				if (position.v[0] > -0.75f && position.v[0] < 0.75f && !OnPlat)	//if sprite is not inbetween the platform 
 				{
-					if (position.v[1] + jumpVelocity > 0.75f)
+					if (position.v[1] + jumpVelocity > 0.75f)	// if the player is above the platform
 					{
 						model_player = translate(model_player, vec3(0.0f, jumpVelocity, 0.0f));
 					} else
@@ -348,19 +352,17 @@ bool OnPlat = false;
 						jumpVelocity = 0;
 						first = true;
 					}
-					
+			
 				}else{
 					OnPlat = false;
 					model_player = translate(model_player, vec3(0.0f, jumpVelocity, 0.0f));
 				}
-			
+			}else
+			{
+				jumpTrigger = false;
+				jumpVelocity = 0;
 			}
-		
-			else
-				{jumpTrigger = false;
-				jumpVelocity = 0;}
-
-		}else if (position.v[1] + jumpVelocity > 0 && (position.v[0] < -0.75f || position.v[0] > 0.75f))
+		} else if (position.v[1] + jumpVelocity > 0 && (position.v[0] < -0.75f || position.v[0] > 0.75f))//if there is no jump animation and normal gravity should apply
 		{
 
 			jumpVelocity -= gravity;
@@ -378,11 +380,6 @@ bool OnPlat = false;
 		
 
 
-	
-
-    // Check if the object hits the ground (Y-axis condition)
-    
-
 		// clear graphics context
 		glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
@@ -390,19 +387,10 @@ bool OnPlat = false;
 		glUseProgram (shader_programme);
 
 
-		// load uniform variables for shaders
-		// YOU HAVE TO IMPLEMENT THIS FUNCTION IN stub.cpp	
-
-		
-		
-		// The following function will actually draw your previously dispatched/loaded Surface of Revolution
-		// YOU HAVE TO IMPLEMENT THIS FUNCTION IN stub.cpp	
-		
 	
-
 	loadUniforms(shader_programme);
    
-	glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0); // 0 represents GL_TEXTURE0
+	glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0); 
 
     // Bind the texture to GL_TEXTURE0 (if that's the texture unit index you're using)
     glActiveTexture(GL_TEXTURE0);
@@ -411,7 +399,7 @@ bool OnPlat = false;
 
 
 
-   glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0); // 0 represents GL_TEXTURE0
+   glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0);
 
     // Bind the texture to GL_TEXTURE0 (if that's the texture unit index you're using)
     glActiveTexture(GL_TEXTURE0);
@@ -419,7 +407,7 @@ bool OnPlat = false;
 
 	
 	drawStage(shader_programme);
-	glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0); // 0 represents GL_TEXTURE0
+	glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0); 
     // Bind the texture to GL_TEXTURE0 (if that's the texture unit index you're using)
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture); // Bind your desired texture to the unit

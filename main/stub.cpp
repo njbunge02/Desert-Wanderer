@@ -42,20 +42,26 @@ extern float backZ;
 
 
 
-
-bool isW;
-bool isA;
+//true if their respective key is pressed...false if released
+bool isW;	
+bool isA;	
 bool isS;
 bool isD;
+
+//the relative change in x/y for the sprite in main
 float spriteX;
 float spriteY;
+
+//triggers jump animation
 bool jumpTrigger;
 
 
 using namespace std;
 
+//floor,platform,player,background vertices and texture coordinates
 vector<float> floorVerts;
 vector<float> floorTexCoords;
+
 vector<float> platVerts;
 vector<float> platTexCoords;
 
@@ -72,12 +78,14 @@ GLuint platVao;
 GLuint backVao;
 
 
+//creates vertices and texture coordinates
 void generateFloor(vector<float> &vertices, vector<float> &texCoords);
 void generatePlatform(vector<float> &vertices, vector<float> &texCoords);
 void generatePlayer(vector<float> &vertices, vector<float>& texCoords);
 void generateBackground(vector<float> &vertices, vector<float>& texCoords);
 
 
+//creates their VBOs and VAOs
 void loadFloor();
 void loadPlayer();
 void loadPlatform();
@@ -130,20 +138,20 @@ void drawStage(GLuint shader_programme)
 
 
 	
-	// WRITE CODE TO LOAD OTHER UNIFORM VARIABLES LIKE FLAGS FOR ENABLING OR DISABLING CERTAIN FUNCTIONALITIES
 
 
-	glBindVertexArray(floorVao);
-	
+	glBindVertexArray(floorVao);	//floor VAO
 
+	//changes the texture to the dirt block in frag shader
 	GLint textureN = glGetUniformLocation(shader_programme, "textureNum");
 	glUniform1i(textureN, 1);
 
+	//changes is player value to false so the model matrix is not the player matrix
 	GLint isPlayer_loc = glGetUniformLocation(shader_programme, "isPlayer");
 	glUniform1i(isPlayer_loc, 0);
-
-    glDrawArrays(GL_TRIANGLES, 0, floorVerts.size());
-
+    
+	//draws both floor and platform
+	glDrawArrays(GL_TRIANGLES, 0, floorVerts.size());
 
 	glBindVertexArray(platVao);
     glDrawArrays(GL_TRIANGLES, 0, platVerts.size());
@@ -152,26 +160,32 @@ void drawStage(GLuint shader_programme)
 
 void drawBackGround(GLuint shader_programme)
 {
+
 	glBindVertexArray(backVao);
+
+	//changes the texture to the sunset in frag shader
 	GLint textureN = glGetUniformLocation(shader_programme, "textureNum");
 	glUniform1i(textureN, 2);
 
+	//changes is player value to false so the model matrix is not the player matrix
 	GLint isPlayer_loc = glGetUniformLocation(shader_programme, "isPlayer");
 	glUniform1i(isPlayer_loc, 0);
 
-
+	//draws background
     glDrawArrays(GL_TRIANGLES, 0, backgroundVerts.size());
 }
 
 void drawPlayer(GLuint shader_programme)
 {
 
-	// WRITE CODE TO LOAD OTHER UNIFORM VARIABLES LIKE FLAGS FOR ENABLING OR DISABLING CERTAIN FUNCTIONALITIES
+
 	glBindVertexArray(playerVao);
 
+	//set to the sprite texture
 	GLint textureN = glGetUniformLocation(shader_programme, "textureNum");
 	glUniform1i(textureN, 0);
 
+	//set to true because to make the model matrix the player matrix in frag shader
 	GLint isPlayer_loc = glGetUniformLocation(shader_programme, "isPlayer");
 	glUniform1i(isPlayer_loc, 1);
 	
@@ -187,7 +201,8 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
 	//GLFW Reference Links:
 	// Callback Example: https://www.glfw.org/docs/3.3/input_guide.html#input_key
 	// List of Keys: https://www.glfw.org/docs/3.3/group__keys.html
-	float movementSpeed = 0.00125f;
+
+	float movementSpeed = 0.00125f;	//how far the sprite moves per frame that key is pressed
     if (key == GLFW_KEY_W)
     {
 		 if (action == GLFW_PRESS) {
@@ -249,7 +264,6 @@ void generateFloor(vector<float> &vertices, vector<float> &texCoords)
 	int offsetY = -1;
 	float height = 0.2;
 	float x = 2.5;
-	
 	
 	//face 1, vertex 1
 	vertices.push_back(-x);
@@ -453,7 +467,6 @@ void loadFloor()
 	glBindVertexArray (floorVao);       // basically setting up memory and associating it
 
 	// VBO -- vertex buffer object to contain coordinates
-	// MODIFY THE FOLLOWING BLOCK OF CODE APPRORIATELY FOR YOUR SURFACE OF REVOLUTION
 	GLuint points_vbo;
 	glGenBuffers(1, &points_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
@@ -476,7 +489,7 @@ void loadPlatform()
 	glBindVertexArray (platVao);       // basically setting up memory and associating it
 
 	// VBO -- vertex buffer object to contain coordinates
-	// MODIFY THE FOLLOWING BLOCK OF CODE APPRORIATELY FOR YOUR SURFACE OF REVOLUTION
+
 	GLuint points_vbo;
 	glGenBuffers(1, &points_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
@@ -501,7 +514,7 @@ void loadPlayer()
 	glBindVertexArray (playerVao);       // basically setting up memory and associating it
 
 	// VBO -- vertex buffer object to contain coordinates
-	// MODIFY THE FOLLOWING BLOCK OF CODE APPRORIATELY FOR YOUR SURFACE OF REVOLUTION
+
 	GLuint points_vbo;
 	glGenBuffers(1, &points_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
@@ -525,7 +538,7 @@ void loadBackground()
 	glBindVertexArray (backVao);       // basically setting up memory and associating it
 
 	// VBO -- vertex buffer object to contain coordinates
-	// MODIFY THE FOLLOWING BLOCK OF CODE APPRORIATELY FOR YOUR SURFACE OF REVOLUTION
+
 	GLuint points_vbo;
 	glGenBuffers(1, &points_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, points_vbo);

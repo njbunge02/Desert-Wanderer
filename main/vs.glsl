@@ -16,7 +16,7 @@ void main() {
     mat4 model_matrix;
     textureCoordinates = texCoords;
     
-
+    //determines if the object is going to be translated or not with key pressed
     if (isPlayer == 1)
     {
         model_matrix = model_player;
