@@ -237,7 +237,8 @@ float jumpVelocity = 0.0f; // Initial jump velocity
 float gravity = 0.00005f; // Gravity acting on the player
 bool first = true;	//the first time the jump loop is entered
 bool OnPlat = false;	//true if player is on platform
-
+bool afterJumpFlag = false;
+bool fallFlag = false;
 
 	while (!glfwWindowShouldClose (g_window)) {
 		// update timers
@@ -290,33 +291,32 @@ bool OnPlat = false;	//true if player is on platform
 		else if (isS)
 		{
 			idleFlag = false;
+			fallFlag = true;
 		}else 
 		{
 
 		count++;
 		}
 
-		if (count > 50)	//makes sure 50 cycles pass before it switches to idle animation after key release
+		if (count > 15)	//makes sure 50 cycles pass before it switches to idle animation after key release
 		{	uv_y = 2.0f;
 		if (!idleFlag)
 		{
 			uv_x = 0.0f;
-		idleFlag = true;
+			idleFlag = true;
 		}
 			numXInAnimation = 6.0f;
 		}
 
-
-
 	//moves player left and right
-		if (position.v[0] + spriteX > -2.4f && position.v[0] + spriteX < 2.4f)	//determines if player is in border bounds
+		if (position.v[0] + spriteX > -2.4f && position.v[0] + spriteX < 2.4f )	//determines if player is in border bounds
 		{
-			if ((position.v[0] > -0.75f && position.v[0] < 0.75f && position.v[1] < 0.70f && position.v[1] > 0.25f))	//determines if player is in the platform 
+			if ((position.v[0] > -0.75f && position.v[0] < 0.75f && position.v[1] < 0.70f && position.v[1] > 0.25f) && !fallFlag)	//determines if player is in the platform 
 			{
 				if(abs(position.v[0] + 0.75f) <= abs(position.v[0] - 0.75))	//determines which side the player is closest to and moves them out of the platform
 				{
 					model_player = translate(model_player, vec3(-0.00125f, 0.0f, 0.0f));
-				} else
+				} else 
 				{
 					model_player = translate(model_player, vec3(0.00125f, 0.0f, 0.0f));
 				}
@@ -324,11 +324,11 @@ bool OnPlat = false;	//true if player is on platform
 				model_player = translate(model_player, vec3(spriteX, 0.0f, 0.0f));
 		}
 	
-			
-			
+
 	//jump animation
-		if (jumpTrigger)
+		if (jumpTrigger && !fallFlag)
 		{
+			afterJumpFlag = true;
 			if (first)	//if first time entering jump loop
 				{
 					jumpVelocity = 0.01f;	//set it to intial velocity 
@@ -340,7 +340,7 @@ bool OnPlat = false;	//true if player is on platform
 			jumpVelocity -= gravity;
 			if (position.v[1] + jumpVelocity > 0 )	//if sprite is above floor
 			{
-				if (position.v[0] > -0.75f && position.v[0] < 0.75f && !OnPlat)	//if sprite is not inbetween the platform 
+				if (position.v[0] > -0.75f && position.v[0] < 0.75f && !OnPlat && position.v[1] > 0.75f)	//if sprite is not inbetween the platform 
 				{
 					if (position.v[1] + jumpVelocity > 0.75f)	// if the player is above the platform
 					{
@@ -361,19 +361,47 @@ bool OnPlat = false;	//true if player is on platform
 			{
 				jumpTrigger = false;
 				jumpVelocity = 0;
-			}
-		} else if (position.v[1] + jumpVelocity > 0 && (position.v[0] < -0.75f || position.v[0] > 0.75f))//if there is no jump animation and normal gravity should apply
-		{
+				if (isA)
+				{
+				GLint textScale = glGetUniformLocation(shader_programme, "reverse");
+				glUniform1i(textScale, 1);
+				uv_y = 0.0f;
+				numXInAnimation = 8.0f;
+				} else if (isD){
+				GLint textScale = glGetUniformLocation(shader_programme, "reverse");
+				glUniform1i(textScale, 0);
+				uv_y = 0.0f;
+				numXInAnimation = 8.0f;
+				}
 
+				if (afterJumpFlag)
+				{
+					uv_x = 0.0;
+					afterJumpFlag = false;
+				}
+				
+			}
+		} else if (position.v[1] + jumpVelocity > 0 && (position.v[0] < -0.75f || position.v[0] > 0.75f || fallFlag))//if there is no jump animation and normal gravity should apply
+		{
 			jumpVelocity -= gravity;
 			first = true;
 			model_player = translate(model_player, vec3(0.0f, jumpVelocity, 0.0f));
 		}else if ((position.v[0] > -0.75f && position.v[0] < 0.75f))
 		{
-			jumpVelocity -= gravity;
+			
 			first = true;
 			if ((position.v[1] + jumpVelocity > 0.75f || position.v[1] + jumpVelocity < 0.25f) && position.v[1] + jumpVelocity > 0)
-				model_player = translate(model_player, vec3(0.0f, jumpVelocity, 0.0f));
+				{
+				jumpVelocity -= gravity;
+				model_player = translate(model_player, vec3(0.0f, jumpVelocity, 0.0f));}
+			else
+			{
+				fallFlag = false;
+				jumpTrigger = false;
+			}
+		} else
+		{
+			jumpTrigger = false;
 		}
 
 		
