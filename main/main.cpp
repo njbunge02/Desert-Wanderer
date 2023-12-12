@@ -429,7 +429,8 @@ int jumpCount = 0;
 		}
 			numXInAnimation = 6.0f;
 		}
-
+		
+		
 
 	//moves player left and right
 		if (position.v[0] + spriteX > -BORDER_X && position.v[0] + spriteX < BORDER_X )	//determines if player is in border bounds
@@ -518,6 +519,8 @@ int jumpCount = 0;
 			}
 		} else if (position.v[1] + jumpVelocity > 0 && (position.v[0] < -0.75f || position.v[0] > 0.75f || fallFlag))//if there is no jump animation and normal gravity should apply
 		{
+			uv_y = 1.0f;
+			numXInAnimation = 10.0f;
 			jumpVelocity -= gravity;
 			first = true;
 			model_player = translate(model_player, vec3(0.0f, jumpVelocity, 0.0f));
@@ -527,6 +530,8 @@ int jumpCount = 0;
 			first = true;
 			if ((position.v[1] + jumpVelocity > 0.75f || position.v[1] + jumpVelocity < 0.25f) && position.v[1] + jumpVelocity > 0)
 				{
+				uv_y = 1.0f;
+				numXInAnimation = 10.0f;
 				jumpVelocity -= gravity;
 				model_player = translate(model_player, vec3(0.0f, jumpVelocity, 0.0f));}
 			else
