@@ -79,6 +79,8 @@ void drawStage(GLuint shader_programme);
 void drawPlayer(GLuint shader_programme);
 void drawBackGround(GLuint shader_programme);
 void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int mods);
+void moveCameraRight(mat4& view_mat);
+void moveCameraLeft(mat4& view_mat);
 
 
 // Forward Declaration
@@ -298,7 +300,7 @@ bool fallFlag = false;
 		count++;
 		}
 
-		if (count > 15)	//makes sure 50 cycles pass before it switches to idle animation after key release
+		if (count > 20)	//makes sure 50 cycles pass before it switches to idle animation after key release
 		{	uv_y = 2.0f;
 		if (!idleFlag)
 		{
@@ -308,20 +310,30 @@ bool fallFlag = false;
 			numXInAnimation = 6.0f;
 		}
 
+
 	//moves player left and right
-		if (position.v[0] + spriteX > -2.4f && position.v[0] + spriteX < 2.4f )	//determines if player is in border bounds
+		if (position.v[0] + spriteX > -3.7f && position.v[0] + spriteX < 3.7f )	//determines if player is in border bounds
 		{
 			if ((position.v[0] > -0.75f && position.v[0] < 0.75f && position.v[1] < 0.70f && position.v[1] > 0.25f) && !fallFlag)	//determines if player is in the platform 
 			{
 				if(abs(position.v[0] + 0.75f) <= abs(position.v[0] - 0.75))	//determines which side the player is closest to and moves them out of the platform
 				{
-					model_player = translate(model_player, vec3(-0.00125f, 0.0f, 0.0f));
+					model_player = translate(model_player, vec3(-0.002f, 0.0f, 0.0f));
 				} else 
 				{
-					model_player = translate(model_player, vec3(0.00125f, 0.0f, 0.0f));
+					model_player = translate(model_player, vec3(0.002f, 0.0f, 0.0f));
 				}
 			} else
-				model_player = translate(model_player, vec3(spriteX, 0.0f, 0.0f));
+			{
+			model_player = translate(model_player, vec3(spriteX, 0.0f, 0.0f));
+			if (position.v[0] > 2.0f || position.v[0] < -2.0f)
+			{
+				if (isD)
+					moveCameraRight(view_mat);
+				else if (isA)
+					moveCameraLeft(view_mat);
+			}
+			}
 		}
 	
 
@@ -457,6 +469,7 @@ bool fallFlag = false;
 	
 	// close GL context and any other GLFW resources
 	glfwTerminate();
+
 	return 0;
 }
 
@@ -516,3 +529,29 @@ bool load_texture (const char* file_name, GLuint* tex) {
 	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_aniso);
 	return true;
 }
+
+void moveCameraRight(mat4& view_mat) {
+
+    // Update the view matrix with the new camera position
+	 vec3 right = vec3(view_mat.m[0], view_mat.m[4], view_mat.m[8]); // Extract the camera's right vector
+    vec3 translation = right * -0.0015f; // Define the amount of translation (adjust as needed)
+
+    // Translate the camera position by the calculated amount
+   if (view_mat.m[12] > -1.2f)
+	{
+		 view_mat = translate(view_mat, translation);
+	}
+
+}
+
+void moveCameraLeft(mat4& view_mat) {
+    vec3 right = vec3(view_mat.m[0], view_mat.m[4], view_mat.m[8]); // Extract the right vector from the view matrix
+    vec3 translation = right * 0.0015f; // Move the camera position to the left by the specified amount
+	if (view_mat.m[12] < 1.2f)
+	{
+		 view_mat = translate(view_mat, translation);
+	}
+	
+   
+}
+

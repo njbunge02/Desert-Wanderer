@@ -202,7 +202,7 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
 	// Callback Example: https://www.glfw.org/docs/3.3/input_guide.html#input_key
 	// List of Keys: https://www.glfw.org/docs/3.3/group__keys.html
 
-	float movementSpeed = 0.00125f;	//how far the sprite moves per frame that key is pressed
+	float movementSpeed = 0.002f;	//how far the sprite moves per frame that key is pressed
     if (key == GLFW_KEY_W)
     {
 		 if (action == GLFW_PRESS) {
@@ -263,7 +263,8 @@ void generateFloor(vector<float> &vertices, vector<float> &texCoords)
 {	
 	int offsetY = -1;
 	float height = 0.2;
-	float x = 2.5;
+	float x = 5;
+	float  textureScale = 10.0f;
 	
 	//face 1, vertex 1
 	vertices.push_back(-x);
@@ -293,16 +294,16 @@ void generateFloor(vector<float> &vertices, vector<float> &texCoords)
 
 	texCoords.push_back(0.0f); // Texture coordinate for vertex 1 of face 1 (bottom-left)
     texCoords.push_back(0.0f);
-    texCoords.push_back(5.0f); // Texture coordinate for vertex 2 of face 1 (bottom-right)
+    texCoords.push_back(textureScale); // Texture coordinate for vertex 2 of face 1 (bottom-right)
     texCoords.push_back(0.0f);
     texCoords.push_back(0.0f); // Texture coordinate for vertex 3 of face 1 (top-left)
     texCoords.push_back(1.0f);
     // Texture coordinate for vertex 1 of face 2 (top-left)
     texCoords.push_back(0.0f);
     texCoords.push_back(1.0f);
-    texCoords.push_back(5.0f); // Texture coordinate for vertex 2 of face 2 (bottom-right)
+    texCoords.push_back(textureScale); // Texture coordinate for vertex 2 of face 2 (bottom-right)
     texCoords.push_back(0.0f);
-    texCoords.push_back(5.0f); // Texture coordinate for vertex 3 of face 2 (top-right)
+    texCoords.push_back(textureScale); // Texture coordinate for vertex 3 of face 2 (top-right)
     texCoords.push_back(1.0f);
 
 
@@ -412,30 +413,30 @@ void generatePlayer(vector<float> &vertices, vector<float> &texCoords)
 void generateBackground(vector<float> &vertices, vector<float>& texCoords)
 {
 
-	float offsetY = -1.9;
-	float height = 3.5f;
-	float x = 16.0f / 4.0f;
+	float offsetY = -2;
+	float height = 3.75f;
+	float x = 5.0f;
 	//face 1, vertex 1
 	
-	vertices.push_back(-x);
-	vertices.push_back(0 + offsetY);
+	vertices.push_back(-1 * x);
+	vertices.push_back(offsetY);
 	vertices.push_back(backZ);
 	//face 1, vertex 2
 	vertices.push_back(x);
-	vertices.push_back(0+ offsetY);
+	vertices.push_back(offsetY);
 	vertices.push_back(0);
 	//face 1, vertex 3
-	vertices.push_back(-x);
+	vertices.push_back(-1 * x);
 	vertices.push_back(height + offsetY);
 	vertices.push_back(backZ);
 
 	//face 2, vertex 1
-	vertices.push_back(-x);
+	vertices.push_back(-1 * x - 0.01f);
 	vertices.push_back(height + offsetY);
 	vertices.push_back(backZ);
 	//face 2, vertex 2
-	vertices.push_back(x);
-	vertices.push_back(0+ offsetY);
+	vertices.push_back(x - 0.01f);
+	vertices.push_back(offsetY);
 	vertices.push_back(backZ);
 	//face 2, vertex 3
 	vertices.push_back(x);
