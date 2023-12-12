@@ -39,12 +39,16 @@ extern float uv_x;
 extern float uv_y;
 
 
+
+
 bool isW;
 bool isA;
 bool isS;
 bool isD;
 float spriteX;
 float spriteY;
+bool jumpTrigger;
+
 
 using namespace std;
 
@@ -161,10 +165,11 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
     {
 		 if (action == GLFW_PRESS) {
             isW = true;
+			jumpTrigger = true;
 			spriteY = movementSpeed;
         } else if (action == GLFW_RELEASE) {
             isW = false;
-			spriteY = 0;
+			spriteY = 1;
 		}
 
 	}
@@ -315,7 +320,7 @@ void generatePlatform(vector<float> &vertices, vector<float> &texCoords)
 
 void generatePlayer(vector<float> &vertices, vector<float> &texCoords)
 {
-	int offsetY = 0;
+	float offsetY = -0.901f;
 	float height = 0.62f;
 	float x = height/2.0f;
 	//face 1, vertex 1

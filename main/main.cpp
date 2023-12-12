@@ -23,6 +23,8 @@
 #include <GL/glew.h>       // Include GLEW (or new version of GL if on Windows).
 #include <GLFW/glfw3.h>    // GLFW helper library.
 
+
+
 #include "maths_funcs.h"   // Anton's maths functions.
 #include "gl_utils.h"      // Anton's opengl functions and small utilities like logs
 #include "obj_parser.h"    // Anton's little Wavefront .obj mesh loader
@@ -49,6 +51,7 @@ extern bool isW;
 extern bool isA;
 extern bool isS;
 extern bool isD;
+extern bool jumpTrigger;
 
 bool idleFlag;
 
@@ -197,6 +200,12 @@ int main (int argc, char *argv[]) {
 	now_time = old_time = 0.0f;
 
 /*-------------------------------RENDERING LOOP-------------------------------*/
+
+float jumpVelocity = 0.0f; // Initial jump velocity
+float gravity = 0.00005f; // Gravity acting on the player
+bool first = true;
+bool OnPlat = false;
+
 	while (!glfwWindowShouldClose (g_window)) {
 		// update timers
 		now_time = glfwGetTime();
@@ -224,25 +233,29 @@ int main (int argc, char *argv[]) {
 
 		if (isW)
 			{count = 0;
-			idleFlag = false;}
+			idleFlag = false;
+			}
 		else if (isA)
 			{idleFlag = false;
-					GLint textScale = glGetUniformLocation(shader_programme, "reverse");
+			GLint textScale = glGetUniformLocation(shader_programme, "reverse");
 			glUniform1i(textScale, 1);
-		count = 0;
-			uv_y = 0.0f;
+			count = 0;
+			if (!jumpTrigger)
+			{uv_y = 0.0f;
 			numXInAnimation = 8.0f;}
+			}
 		else if (isD){
 			GLint textScale = glGetUniformLocation(shader_programme, "reverse");
 			glUniform1i(textScale, 0);
 		count = 0;
-			uv_y = 0.0f;
+			if (!jumpTrigger)
+			{uv_y = 0.0f;
 			numXInAnimation = 8.0f;
 			idleFlag = false;
 		}
+		}
 		else if (isS)
 		{
-
 			idleFlag = false;
 		}else 
 		{
@@ -261,15 +274,86 @@ int main (int argc, char *argv[]) {
 		}
 
 
-		if (position.v[0] > -2.4f && position.v[0] < 2.4f)
-			model_player = translate(model_player, vec3(spriteX, 0.0f, 0.0f));
-		if (position.v[1] > -0.9f)
-			model_player = translate(model_player, vec3(0.0f, spriteY, 0.0f));
-			
+
+
+		if (position.v[0] + spriteX > -2.4f && position.v[0] + spriteX < 2.4f)
+		{
+			if ((position.v[0] > -0.75f && position.v[0] < 0.75f && position.v[1] < 0.70f && position.v[1] > 0.25f))
+			{
+				if(abs(position.v[0] + 0.75f) <= abs(position.v[0] - 0.75))
+				{
+					model_player = translate(model_player, vec3(-0.00125f, 0.0f, 0.0f));
+				} else
+				{
+					model_player = translate(model_player, vec3(0.00125f, 0.0f, 0.0f));
+				}
+			} else
+				model_player = translate(model_player, vec3(spriteX, 0.0f, 0.0f));
+				
+				}
 	
 			
+			
+
+		if (jumpTrigger)
+		{
+			if (first)
+				{
+					jumpVelocity = 0.01f;
+					first = false;
+				}
+			
+			uv_y = 1.0f;
+			numXInAnimation = 10.0f;
+			jumpVelocity -= gravity;
+			if (position.v[1] + jumpVelocity > 0 )
+			{
+				if (position.v[0] > -0.75f && position.v[0] < 0.75f && !OnPlat)
+				{
+					if (position.v[1] > 0.75f)
+					{
+						model_player = translate(model_player, vec3(0.0f, jumpVelocity, 0.0f));
+					} else
+					{
+						OnPlat = true;
+						jumpTrigger = false;
+						jumpVelocity = 0;
+						first = true;
+					}
+					
+				}else{
+					OnPlat = false;
+					model_player = translate(model_player, vec3(0.0f, jumpVelocity, 0.0f));
+				}
+			
+			}
+		
+			else
+				{jumpTrigger = false;
+				jumpVelocity = 0;}
+
+		}else if (position.v[1] + jumpVelocity > 0 && (position.v[0] < -0.75f || position.v[0] > 0.75f))
+		{
+
+			jumpVelocity -= gravity;
+			first = true;
+			model_player = translate(model_player, vec3(0.0f, jumpVelocity, 0.0f));
+		}else if ((position.v[0] > -0.75f && position.v[0] < 0.75f))
+		{
+			jumpVelocity -= gravity;
+			first = true;
+			if ((position.v[1] + jumpVelocity > 0.75f || position.v[1] + jumpVelocity < 0.25f) && position.v[1] + jumpVelocity > 0)
+				model_player = translate(model_player, vec3(0.0f, jumpVelocity, 0.0f));
+		}
+
+		std::cout << position.v[1] << "\n";
+		
 
 
+	
+
+    // Check if the object hits the ground (Y-axis condition)
+    
 
 		// clear graphics context
 		glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

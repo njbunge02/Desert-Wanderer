@@ -41,6 +41,4 @@ void main() {
        fragColor = texture(textureSampler, modifiedTexCoord);
     }
 
-
-
 }
