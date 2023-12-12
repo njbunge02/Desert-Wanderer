@@ -270,7 +270,7 @@ int jumpCount = 0;
 			}
 			else if(jumpCount <= 125){
 				jumpCount++;
-				printf("%d\n", jumpCount);
+				
 			}
 			else{
 				if(time_delta >= 1.0f / frames_ps){
