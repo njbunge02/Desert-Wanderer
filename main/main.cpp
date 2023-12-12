@@ -330,7 +330,7 @@ int jumpCount = 0;
 		// update timers
 		now_time = glfwGetTime();
 		time_delta = now_time - old_time;
-		bool down = true;
+
 		_update_fps_counter (g_window);
         now_time = glfwGetTime();
         time_delta = now_time - old_time;
@@ -402,6 +402,7 @@ int jumpCount = 0;
 		else if (isS)
 		{
 			idleFlag = false;
+		if (OnPlat)
 			fallFlag = true;
 		}else 
 		{
@@ -423,17 +424,6 @@ int jumpCount = 0;
 	//moves player left and right
 		if (position.v[0] + spriteX > -3.7f && position.v[0] + spriteX < 3.7f )	//determines if player is in border bounds
 		{
-			/*if ((position.v[0] > -0.75f && position.v[0] < 0.75f && position.v[1] < 0.70f && position.v[1] > 0.25f) && !fallFlag)	//determines if player is in the platform 
-			{
-				/*if(abs(position.v[0] + 0.75f) <= abs(position.v[0] - 0.75))	//determines which side the player is closest to and moves them out of the platform
-				{
-					model_player = translate(model_player, vec3(-0.02f, 0.0f, 0.0f));
-				} else 
-				{
-					model_player = translate(model_player, vec3(0.02f, 0.0f, 0.0f));
-				}
-			} else
-			{*/
 			model_player = translate(model_player, vec3(spriteX, 0.0f, 0.0f));
 			if (position.v[0] > 2.0f || position.v[0] < -2.0f)
 			{
@@ -442,7 +432,6 @@ int jumpCount = 0;
 				else if (isA && !isD)
 					moveCameraLeft(view_mat);
 			}
-			//}
 		}
 	
 
@@ -522,6 +511,7 @@ int jumpCount = 0;
 			}
 		} else
 		{
+
 			jumpTrigger = false;
 		}
 
