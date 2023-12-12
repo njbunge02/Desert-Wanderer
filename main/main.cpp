@@ -238,7 +238,7 @@ int main (int argc, char *argv[]) {
 /*-------------------------------RENDERING LOOP-------------------------------*/
 
 float jumpVelocity = 0.0f; // Initial jump velocity
-float gravity = 0.00005f; // Gravity acting on the player
+float gravity = 0.002f; // Gravity acting on the player
 bool first = true;	//the first time the jump loop is entered
 bool OnPlat = false;	//true if player is on platform
 bool afterJumpFlag = false;
@@ -254,7 +254,7 @@ int jumpCount = 0;
         now_time = glfwGetTime();
         time_delta = now_time - old_time;
 		if(!jumpTrigger && !fallFlag){
-			frames_ps = 30.0f;
+			frames_ps = 8.0f;
 			jumpCount = 0;
 			if(time_delta >= 1.0f / frames_ps) {
 				old_time = now_time;
@@ -266,7 +266,7 @@ int jumpCount = 0;
 			}
 		}
 		else{
-			frames_ps = 15.0f;
+			frames_ps = 4.0f;
 			if(time_delta >= 1.0f / frames_ps && uv_x <= 4){
 				old_time = now_time;
 				time_delta = 0.0f;
@@ -342,17 +342,17 @@ int jumpCount = 0;
 	//moves player left and right
 		if (position.v[0] + spriteX > -3.7f && position.v[0] + spriteX < 3.7f )	//determines if player is in border bounds
 		{
-			if ((position.v[0] > -0.75f && position.v[0] < 0.75f && position.v[1] < 0.70f && position.v[1] > 0.25f) && !fallFlag)	//determines if player is in the platform 
+			/*if ((position.v[0] > -0.75f && position.v[0] < 0.75f && position.v[1] < 0.70f && position.v[1] > 0.25f) && !fallFlag)	//determines if player is in the platform 
 			{
-				if(abs(position.v[0] + 0.75f) <= abs(position.v[0] - 0.75))	//determines which side the player is closest to and moves them out of the platform
+				/*if(abs(position.v[0] + 0.75f) <= abs(position.v[0] - 0.75))	//determines which side the player is closest to and moves them out of the platform
 				{
-					model_player = translate(model_player, vec3(-0.002f, 0.0f, 0.0f));
+					model_player = translate(model_player, vec3(-0.02f, 0.0f, 0.0f));
 				} else 
 				{
-					model_player = translate(model_player, vec3(0.002f, 0.0f, 0.0f));
+					model_player = translate(model_player, vec3(0.02f, 0.0f, 0.0f));
 				}
 			} else
-			{
+			{*/
 			model_player = translate(model_player, vec3(spriteX, 0.0f, 0.0f));
 			if (position.v[0] > 2.0f || position.v[0] < -2.0f)
 			{
@@ -361,7 +361,7 @@ int jumpCount = 0;
 				else if (isA)
 					moveCameraLeft(view_mat);
 			}
-			}
+			//}
 		}
 	
 
@@ -371,7 +371,7 @@ int jumpCount = 0;
 			afterJumpFlag = true;
 			if (first)	//if first time entering jump loop
 				{
-					jumpVelocity = 0.01f;	//set it to intial velocity 
+					jumpVelocity = 0.06f;	//set it to intial velocity 
 					first = false;
 				}
 			
