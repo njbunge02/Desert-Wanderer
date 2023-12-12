@@ -541,7 +541,7 @@ int jumpCount = 0;
 			}
 		} else
 		{
-
+			fallFlag = false;
 			jumpTrigger = false;
 		}
 
