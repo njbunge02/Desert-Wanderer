@@ -356,9 +356,9 @@ int jumpCount = 0;
 			model_player = translate(model_player, vec3(spriteX, 0.0f, 0.0f));
 			if (position.v[0] > 2.0f || position.v[0] < -2.0f)
 			{
-				if (isD)
+				if (isD && !isA)
 					moveCameraRight(view_mat);
-				else if (isA)
+				else if (isA && !isD)
 					moveCameraLeft(view_mat);
 			}
 			//}
@@ -562,7 +562,7 @@ void moveCameraRight(mat4& view_mat) {
 
     // Update the view matrix with the new camera position
 	 vec3 right = vec3(view_mat.m[0], view_mat.m[4], view_mat.m[8]); // Extract the camera's right vector
-    vec3 translation = right * -0.0015f; // Define the amount of translation (adjust as needed)
+    vec3 translation = right * -0.015f; // Define the amount of translation (adjust as needed)
 
     // Translate the camera position by the calculated amount
    if (view_mat.m[12] > -1.2f)
@@ -574,7 +574,7 @@ void moveCameraRight(mat4& view_mat) {
 
 void moveCameraLeft(mat4& view_mat) {
     vec3 right = vec3(view_mat.m[0], view_mat.m[4], view_mat.m[8]); // Extract the right vector from the view matrix
-    vec3 translation = right * 0.0015f; // Move the camera position to the left by the specified amount
+    vec3 translation = right * 0.015f; // Move the camera position to the left by the specified amount
 	if (view_mat.m[12] < 1.2f)
 	{
 		 view_mat = translate(view_mat, translation);

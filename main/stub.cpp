@@ -226,28 +226,28 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
 			spriteY = 0;
 		}
 	}
-	 if (key == GLFW_KEY_A)
-    {
-
-		 if (action == GLFW_PRESS) {
-            isA = true;
-			isD = false;
-			spriteX = -movementSpeed;
-        } else if (action == GLFW_RELEASE) {
-            isA = false;
-			spriteX = 0;
+	if (key == GLFW_KEY_A) {
+		if (action == GLFW_PRESS) {
+			isA = true;
+		} else if (action == GLFW_RELEASE) {
+			isA = false;
 		}
 	}
-	 if (key == GLFW_KEY_D)
-    {
-		 if (action == GLFW_PRESS) {
-            isD = true;
-			isA = false;
-			spriteX = movementSpeed;
-        } else if (action == GLFW_RELEASE) {
-            isD = false;
-			spriteX = 0;
+
+	if (key == GLFW_KEY_D) {
+		if (action == GLFW_PRESS) {
+			isD = true;
+		} else if (action == GLFW_RELEASE) {
+			isD = false;
 		}
+	}
+
+	if (isA && !isD) {
+		spriteX = -movementSpeed;
+	} else if (isD && !isA) {
+		spriteX = movementSpeed;
+	} else {
+		spriteX = 0;
 	}
 
         
