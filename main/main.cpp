@@ -36,6 +36,15 @@
 #define _USE_MATH_DEFINES
 #define ONE_DEG_IN_RAD (2.0 * M_PI) / 360.0 // 0.017444444
 
+#define BORDER_X 3.7f
+#define PLATFORM_X 0.75f
+
+#define PLAT_TOP_BOUND 0.70f
+#define PLAT_LOW_BOUND 0.25f
+
+#define INITIAL_CAM_BOUNDS_X 2.0f
+
+
 // The view and proj matrices below make-up the camera position, orientation, fov, etc.
 // The model matrices moves your surface of revolution to the world coordinate system
 extern mat4 view_mat;
@@ -64,6 +73,7 @@ int count;
 
 //z coordinate of player and back
 float playerZ = 0.01f;
+extern float movementSpeed;
 
 
 
@@ -422,22 +432,22 @@ int jumpCount = 0;
 
 
 	//moves player left and right
-		if (position.v[0] + spriteX > -3.7f && position.v[0] + spriteX < 3.7f )	//determines if player is in border bounds
+		if (position.v[0] + spriteX > -BORDER_X && position.v[0] + spriteX < BORDER_X )	//determines if player is in border bounds
 		{
-			if((position.v[0] > -0.75f && position.v[0] < 0.75f && position.v[1] < 0.70f && position.v[1] > 0.25f) && !fallFlag && !jumpTrigger)	//determines if player is in the platform 
+			if((position.v[0] > -PLATFORM_X && position.v[0] < PLATFORM_X && position.v[1] < PLAT_TOP_BOUND && position.v[1] > PLAT_LOW_BOUND) && !fallFlag && !jumpTrigger)	//determines if player is in the platform 
 			{
-				if(abs(position.v[0] + 0.75f) <= abs(position.v[0] - 0.75))	//determines which side the player is closest to and moves them out of the platform
+				if(abs(position.v[0] + PLATFORM_X) <= abs(position.v[0] - PLATFORM_X))	//determines which side the player is closest to and moves them out of the platform
 				{
-					model_player = translate(model_player, vec3(-0.02f, 0.0f, 0.0f));
+					model_player = translate(model_player, vec3(-movementSpeed, 0.0f, 0.0f));
 				} else 
 				{
-					model_player = translate(model_player, vec3(0.02f, 0.0f, 0.0f));
+					model_player = translate(model_player, vec3(movementSpeed, 0.0f, 0.0f));
 				}
 			} else
 			{
-				model_player = translate(model_player, vec3(spriteX, 0.0f, 0.0f));
+					model_player = translate(model_player, vec3(spriteX, 0.0f, 0.0f));
 			}
-			if (position.v[0] > 2.0f || position.v[0] < -2.0f)
+			if (position.v[0] > INITIAL_CAM_BOUNDS_X || position.v[0] < -INITIAL_CAM_BOUNDS_X)
 			{
 				if (isD && !isA)
 					moveCameraRight(view_mat);
@@ -460,7 +470,6 @@ int jumpCount = 0;
 					jumpVelocity = 0.06f;	//set it to intial velocity 
 					first = false;
 				}
-			
 			uv_y = 1.0f;
 			numXInAnimation = 10.0f;
 			jumpVelocity -= gravity;

@@ -39,7 +39,7 @@ extern float uv_x;
 extern float uv_y;
 extern float playerZ;
 
-
+float movementSpeed = 0.02f;	//how far the sprite moves per frame that key is pressed
 
 
 //true if their respective key is pressed...false if released
@@ -284,7 +284,7 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int
 	// Callback Example: https://www.glfw.org/docs/3.3/input_guide.html#input_key
 	// List of Keys: https://www.glfw.org/docs/3.3/group__keys.html
 
-	float movementSpeed = 0.02f;	//how far the sprite moves per frame that key is pressed
+	
     if (key == GLFW_KEY_W)
     {
 		 if (action == GLFW_PRESS) {

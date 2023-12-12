@@ -1,4 +1,4 @@
-BIN = cg05
+BIN = DesertWanderer
 CC = g++
 FLAGS = -Wall -pedantic -no-pie
 INC = -I ../common/include
