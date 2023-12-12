@@ -37,6 +37,8 @@ extern float nx_frames;
 extern float ny_frames;
 extern float uv_x;
 extern float uv_y;
+extern float playerZ;
+extern float backZ;
 
 
 
@@ -57,6 +59,9 @@ vector<float> floorTexCoords;
 vector<float> platVerts;
 vector<float> platTexCoords;
 
+vector<float> backgroundVerts;
+vector<float> backgroundTexCoords;
+
 
 vector<float> playerVerts;
 vector<float> playerTexCoords;
@@ -64,14 +69,19 @@ vector<float> playerTexCoords;
 GLuint playerVao;
 GLuint floorVao;
 GLuint platVao;
+GLuint backVao;
 
 
 void generateFloor(vector<float> &vertices, vector<float> &texCoords);
 void generatePlatform(vector<float> &vertices, vector<float> &texCoords);
 void generatePlayer(vector<float> &vertices, vector<float>& texCoords);
+void generateBackground(vector<float> &vertices, vector<float>& texCoords);
+
+
 void loadFloor();
 void loadPlayer();
 void loadPlatform();
+void loadBackground();
 
 
 void loadSurfaceOfRevolution() 
@@ -81,6 +91,9 @@ void loadSurfaceOfRevolution()
 	generateFloor(floorVerts, floorTexCoords);
 	generatePlatform(platVerts, platTexCoords);
 	generatePlayer(playerVerts, playerTexCoords);
+	generateBackground(backgroundVerts, backgroundTexCoords);
+
+	loadBackground();
 	loadFloor();
 	loadPlayer();
 	loadPlatform();
@@ -137,6 +150,19 @@ void drawStage(GLuint shader_programme)
 
 }
 
+void drawBackGround(GLuint shader_programme)
+{
+	glBindVertexArray(backVao);
+	GLint textureN = glGetUniformLocation(shader_programme, "textureNum");
+	glUniform1i(textureN, 2);
+
+	GLint isPlayer_loc = glGetUniformLocation(shader_programme, "isPlayer");
+	glUniform1i(isPlayer_loc, 0);
+
+
+    glDrawArrays(GL_TRIANGLES, 0, backgroundVerts.size());
+}
+
 void drawPlayer(GLuint shader_programme)
 {
 
@@ -145,6 +171,7 @@ void drawPlayer(GLuint shader_programme)
 
 	GLint textureN = glGetUniformLocation(shader_programme, "textureNum");
 	glUniform1i(textureN, 0);
+
 	GLint isPlayer_loc = glGetUniformLocation(shader_programme, "isPlayer");
 	glUniform1i(isPlayer_loc, 1);
 	
@@ -323,32 +350,33 @@ void generatePlayer(vector<float> &vertices, vector<float> &texCoords)
 	float offsetY = -0.901f;
 	float height = 0.62f;
 	float x = height/2.0f;
+
 	//face 1, vertex 1
 	
 	vertices.push_back(-x);
 	vertices.push_back(0 + offsetY);
-	vertices.push_back(0);
+	vertices.push_back(playerZ);
 	//face 1, vertex 2
 	vertices.push_back(x);
 	vertices.push_back(0+ offsetY);
-	vertices.push_back(0);
+	vertices.push_back(playerZ);
 	//face 1, vertex 3
 	vertices.push_back(-x);
 	vertices.push_back(height + offsetY);
-	vertices.push_back(0);
+	vertices.push_back(playerZ);
 
 	//face 2, vertex 1
 	vertices.push_back(-x);
 	vertices.push_back(height + offsetY);
-	vertices.push_back(0);
+	vertices.push_back(playerZ);
 	//face 2, vertex 2
 	vertices.push_back(x);
 	vertices.push_back(0+ offsetY);
-	vertices.push_back(0);
+	vertices.push_back(playerZ);
 	//face 2, vertex 3
 	vertices.push_back(x);
 	vertices.push_back(height + offsetY);
-	vertices.push_back(0);
+	vertices.push_back(playerZ);
 
 	texCoords.push_back(0.0f); // Texture coordinate for vertex 1 of face 1 (bottom-left)
     texCoords.push_back(0.0f);
@@ -366,6 +394,57 @@ void generatePlayer(vector<float> &vertices, vector<float> &texCoords)
 
 
 }
+
+void generateBackground(vector<float> &vertices, vector<float>& texCoords)
+{
+
+	float offsetY = -1.9;
+	float height = 3.5f;
+	float x = 16.0f / 4.0f;
+	//face 1, vertex 1
+	
+	vertices.push_back(-x);
+	vertices.push_back(0 + offsetY);
+	vertices.push_back(backZ);
+	//face 1, vertex 2
+	vertices.push_back(x);
+	vertices.push_back(0+ offsetY);
+	vertices.push_back(0);
+	//face 1, vertex 3
+	vertices.push_back(-x);
+	vertices.push_back(height + offsetY);
+	vertices.push_back(backZ);
+
+	//face 2, vertex 1
+	vertices.push_back(-x);
+	vertices.push_back(height + offsetY);
+	vertices.push_back(backZ);
+	//face 2, vertex 2
+	vertices.push_back(x);
+	vertices.push_back(0+ offsetY);
+	vertices.push_back(backZ);
+	//face 2, vertex 3
+	vertices.push_back(x);
+	vertices.push_back(height + offsetY);
+	vertices.push_back(backZ);
+
+	texCoords.push_back(0.0f); // Texture coordinate for vertex 1 of face 1 (bottom-left)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.0f); // Texture coordinate for vertex 2 of face 1 (bottom-right)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(0.0f); // Texture coordinate for vertex 3 of face 1 (top-left)
+    texCoords.push_back(1.0f);
+    // Texture coordinate for vertex 1 of face 2 (top-left)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.0f);
+    texCoords.push_back(1.0f); // Texture coordinate for vertex 2 of face 2 (bottom-right)
+    texCoords.push_back(0.0f);
+    texCoords.push_back(1.0f); // Texture coordinate for vertex 3 of face 2 (top-right)
+    texCoords.push_back(1.0f);
+
+}
+
+
 
 void loadFloor()
 {
@@ -388,8 +467,6 @@ void loadFloor()
     glBufferData(GL_ARRAY_BUFFER, floorTexCoords.size() * sizeof(float), floorTexCoords.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
     glEnableVertexAttribArray(2);
-
-
 }
 
 void loadPlatform()
@@ -439,4 +516,27 @@ void loadPlayer()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
     glEnableVertexAttribArray(2);
 
+}
+
+void loadBackground()
+{
+	// VAO -- vertex attribute objects bundle the various things associated with vertices
+	glGenVertexArrays (1, &backVao);   // generating and binding is common pattern in OpenGL
+	glBindVertexArray (backVao);       // basically setting up memory and associating it
+
+	// VBO -- vertex buffer object to contain coordinates
+	// MODIFY THE FOLLOWING BLOCK OF CODE APPRORIATELY FOR YOUR SURFACE OF REVOLUTION
+	GLuint points_vbo;
+	glGenBuffers(1, &points_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+	glBufferData(GL_ARRAY_BUFFER, backgroundVerts.size() * sizeof(float), backgroundVerts.data(), GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(0);
+
+	GLuint texcoords_vbo;
+    glGenBuffers(1, &texcoords_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, texcoords_vbo);
+    glBufferData(GL_ARRAY_BUFFER, backgroundTexCoords.size() * sizeof(float), backgroundTexCoords.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(2);
 }

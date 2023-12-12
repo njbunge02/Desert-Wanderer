@@ -39,6 +39,9 @@ void main() {
     {
         vec2 modifiedTexCoord = vec2(textureCoordinates.x * 5, textureCoordinates.y);
        fragColor = texture(textureSampler, modifiedTexCoord);
+    }else
+    {
+       fragColor = texture(textureSampler, textureCoordinates);
     }
 
 }

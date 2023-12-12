@@ -59,6 +59,8 @@ extern float spriteX;
 extern float spriteY;
 
 int count;
+float playerZ = 0.01f;
+float backZ = -0.01f;
 
 
 // the vector below indicates camra placement. 
@@ -71,6 +73,7 @@ void loadSurfaceOfRevolution();
 void loadUniforms(GLuint shader_programme);
 void drawStage(GLuint shader_programme);
 void drawPlayer(GLuint shader_programme);
+void drawBackGround(GLuint shader_programme);
 void keyboardFunction(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 
@@ -113,6 +116,8 @@ int main (int argc, char *argv[]) {
 
 /*-------------------------------SETUP TEXTURES-------------------------------*/
 	// load textures
+
+
 	unsigned int texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -154,6 +159,27 @@ int main (int argc, char *argv[]) {
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(img_data1);
+
+
+	unsigned int texture2;
+    glGenTextures(1, &texture2);
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    int width2, height2, nrChannels2;
+    unsigned char *img_data2 = stbi_load("back.jpg", &width2, &height2, &nrChannels2, 0);
+    if(!img_data2) {
+        fprintf(stderr, "Failed loading image!\n");
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, img_data2);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(img_data2);
 	
 	
 
@@ -196,6 +222,7 @@ int main (int argc, char *argv[]) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+
 	double now_time, old_time, time_delta;
 	now_time = old_time = 0.0f;
 
@@ -205,6 +232,7 @@ float jumpVelocity = 0.0f; // Initial jump velocity
 float gravity = 0.00005f; // Gravity acting on the player
 bool first = true;
 bool OnPlat = false;
+
 
 	while (!glfwWindowShouldClose (g_window)) {
 		// update timers
@@ -310,7 +338,7 @@ bool OnPlat = false;
 			{
 				if (position.v[0] > -0.75f && position.v[0] < 0.75f && !OnPlat)
 				{
-					if (position.v[1] > 0.75f)
+					if (position.v[1] + jumpVelocity > 0.75f)
 					{
 						model_player = translate(model_player, vec3(0.0f, jumpVelocity, 0.0f));
 					} else
@@ -346,7 +374,7 @@ bool OnPlat = false;
 				model_player = translate(model_player, vec3(0.0f, jumpVelocity, 0.0f));
 		}
 
-		std::cout << position.v[1] << "\n";
+		
 		
 
 
@@ -370,8 +398,19 @@ bool OnPlat = false;
 		// The following function will actually draw your previously dispatched/loaded Surface of Revolution
 		// YOU HAVE TO IMPLEMENT THIS FUNCTION IN stub.cpp	
 		
-		loadUniforms(shader_programme);
+	
+
+	loadUniforms(shader_programme);
    
+	glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0); // 0 represents GL_TEXTURE0
+
+    // Bind the texture to GL_TEXTURE0 (if that's the texture unit index you're using)
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture2); // Bind your desired texture to the unit
+	drawBackGround(shader_programme);
+
+
+
    glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0); // 0 represents GL_TEXTURE0
 
     // Bind the texture to GL_TEXTURE0 (if that's the texture unit index you're using)
@@ -379,13 +418,16 @@ bool OnPlat = false;
     glBindTexture(GL_TEXTURE_2D, texture1); // Bind your desired texture to the unit
 
 	
-		drawStage(shader_programme);
-		glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0); // 0 represents GL_TEXTURE0
+	drawStage(shader_programme);
+	glUniform1i(glGetUniformLocation(shader_programme, "textureSampler"), 0); // 0 represents GL_TEXTURE0
     // Bind the texture to GL_TEXTURE0 (if that's the texture unit index you're using)
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture); // Bind your desired texture to the unit
 
-		drawPlayer(shader_programme);
+	drawPlayer(shader_programme);
+
+ 	
+	
 
 		// update other events like input handling 
 		glfwPollEvents ();
