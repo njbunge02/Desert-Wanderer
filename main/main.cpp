@@ -239,6 +239,7 @@ bool first = true;	//the first time the jump loop is entered
 bool OnPlat = false;	//true if player is on platform
 bool afterJumpFlag = false;
 bool fallFlag = false;
+int jumpCount = 0;
 
 	while (!glfwWindowShouldClose (g_window)) {
 		// update timers
@@ -248,14 +249,39 @@ bool fallFlag = false;
 		_update_fps_counter (g_window);
         now_time = glfwGetTime();
         time_delta = now_time - old_time;
-        if(time_delta >= 1.0f / frames_ps) {
-            old_time = now_time;
-            time_delta = 0.0f;
-            uv_x += 1.0f;
-            if(uv_x >= numXInAnimation) {
-                uv_x = 0.0f;
-            }
-        }
+		if(!jumpTrigger && !fallFlag){
+			frames_ps = 8.0f;
+			jumpCount = 0;
+			if(time_delta >= 1.0f / frames_ps) {
+				old_time = now_time;
+				time_delta = 0.0f;
+				uv_x += 1.0f;
+				if(uv_x >= numXInAnimation) {
+					uv_x = 0.0f;
+				}
+			}
+		}
+		else{
+			frames_ps = 4.0f;
+			if(time_delta >= 1.0f / frames_ps && uv_x <= 4){
+				old_time = now_time;
+				time_delta = 0.0f;
+				uv_x += 1.0f;
+			}
+			else if(jumpCount <= 125){
+				jumpCount++;
+				printf("%d\n", jumpCount);
+			}
+			else{
+				if(time_delta >= 1.0f / frames_ps){
+				old_time = now_time;
+				time_delta = 0.0f;
+				if(uv_x < numXInAnimation){
+				uv_x += 1.0f;
+				}
+			}
+			}
+		}
 		
 		vec3 position;
     	position.v[0] = model_player.m[12]; // X component of translation
@@ -298,7 +324,7 @@ bool fallFlag = false;
 		count++;
 		}
 
-		if (count > 15)	//makes sure 50 cycles pass before it switches to idle animation after key release
+		if (count > 25)	//makes sure 50 cycles pass before it switches to idle animation after key release
 		{	uv_y = 2.0f;
 		if (!idleFlag)
 		{
